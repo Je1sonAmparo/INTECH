@@ -288,3 +288,21 @@ h1:focus {
     color: var(--bs-secondary-color);
     opacity: 0.6;
 }
+
+/* Fix height and enable scrolling */
+.grid {
+    height: 16.5rem;
+    overflow-y: auto;
+}
+
+/* Sticky header while scrolling */
+.grid thead {
+    position: sticky;
+    top: 0;
+    background-color: #eee;
+}
+
+/* Subtle stripe effect */
+.grid tr:nth-child(even) {
+    background: rgba(255,255,255,0.4);
+}
