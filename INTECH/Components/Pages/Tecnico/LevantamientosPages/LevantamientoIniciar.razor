@@ -465,6 +465,28 @@
                 .ToList();
             DetalleEditando = null;
         }
+        else
+        {
+            var nuevoDetalle = new LevantamientosDetalle
+            {
+                LevantamientoId = Levantamiento.LevantamientoId,
+                ServicioId = DetalleSeleccionado.ServicioId,
+                Ubicacion = DetalleSeleccionado.Ubicacion,
+                DistanciaRecorrido = DetalleSeleccionado.DistanciaRecorrido,
+                EspacioDisponible = DetalleSeleccionado.EspacioDisponible,
+                DescripcionTecnica = DetalleSeleccionado.DescripcionTecnica,
+                Viable = DetalleSeleccionado.Viable,
+                FotosLevantamientos = DetalleSeleccionado.FotosLevantamientos
+                    .Select(f => new FotosLevantamientos
+                    {
+                        NombreArchivo = f.NombreArchivo,
+                        TipoContenido = f.TipoContenido,
+                        Contenido = f.Contenido
+                    })
+                    .ToList()
+            };
+            Levantamiento.LevantamientosDetalle.Add(nuevoDetalle);
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
