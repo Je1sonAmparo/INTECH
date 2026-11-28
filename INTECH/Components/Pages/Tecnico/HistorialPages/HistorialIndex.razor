@@ -3,6 +3,7 @@
 
 @inject HistorialesService historialesService
 @inject Microsoft.AspNetCore.Identity.UserManager<INTECH.Data.ApplicationUser> userManager
+@inject ServiciosService serviciosService
 @inject ToastService toastService
 
 <PageTitle>Registro de Historial</PageTitle>
@@ -31,7 +32,7 @@
                         <option value="HistorialId">HistorialId</option>
                         <option value="SolicitudId">SolicitudId</option>
                         <option value="Cliente">Cliente</option>
-                        <option value="TipoServicio">Tipo de Servicio</option>
+                        <option value="Servicio">Servicio</option>
                         <option value="Tecnico">Técnico</option>
                         <option value="Fecha">Fecha Finalización</option>
                     </InputSelect>
@@ -53,14 +54,13 @@
                     <InputDate class="form-control" @bind-Value="Hasta"></InputDate>
                 </div>
                 <div class="col-3">
-                    <label class="col-form-label"><strong>Tipo de servicio</strong></label>
-                    <InputSelect class="form-select" @bind-Value="TipoServicioFiltro">
-                        <option value="">Todos</option>
-                        <option value="Cableado Estructurado">Cableado Estructurado</option>
-                        <option value="Instalación de Paneles Solares">Instalación de Paneles Solares</option>
-                        <option value="Instalación de Planta Eléctrica">Instalación de Planta Eléctrica</option>
-                        <option value="Instalación de Sistema UPS">Instalación de Sistema UPS</option>
-                        <option value="Mantenimiento Eléctrico">Mantenimiento Eléctrico</option>
+                    <label class="col-form-label"><strong>Servicio</strong></label>
+                    <InputSelect class="form-select" @bind-Value="ServicioFiltroId">
+                        <option value="0">Todos</option>
+                        @foreach (var servicio in ListaServicios)
+                        {
+                            <option value="@servicio.ServicioId">@servicio.Nombre</option>
+                        }
                     </InputSelect>
                 </div>
                 <div class="col-3">
@@ -82,7 +82,9 @@
                     <PropertyColumn Property="@(h => h.HistorialId)" Title="HistorialId" Sortable="true" />
                     <PropertyColumn Property="@(h => h.SolicitudId)" Title="SolicitudId" Sortable="true" />
                     <PropertyColumn Property="@(h => h.Solicitud.Cliente.Nombre)" Title="Cliente" Sortable="true" />
-                    <PropertyColumn Property="@(h => h.Solicitud.TipoServicio)" Title="Tipo de Servicio" Sortable="true" />
+                    <TemplateColumn Title="Servicios">
+                        @string.Join(", ", context.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre))
+                    </TemplateColumn>
                     <PropertyColumn Property="@(h => h.FechaFinalizacion)" Title="Fecha Finalización" Format="dd/MM/yyyy" Sortable="true" />
                     <TemplateColumn Title="Técnico">
                         @ObtenerNombreTecnico(context.TecnicoId)
@@ -106,17 +108,22 @@
 </div>
 
 @code {
+    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
     public List<Historiales> ListaHistoriales { get; set; } = new List<Historiales>();
     public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
     public DateTime? Desde { get; set; }
     public DateTime? Hasta { get; set; }
-    public string TipoServicioFiltro { get; set; } = string.Empty;
+    public int ServicioFiltroId { get; set; }
     public string TecnicoFiltroId { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        var serviciosResult = await serviciosService.GetList(s => true);
+        serviciosResult.OnSuccess(servicios => ListaServicios = servicios);
+        serviciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los servicios."));
+
         var tecnicos = await userManager.GetUsersInRoleAsync("Técnico");
         ListaTecnicos = tecnicos.ToList();
 
@@ -191,22 +198,22 @@
             historialesPorFechaResult.OnFailure(() =>
                 toastService.ShowError("No se pudieron consultar los historiales."));
         }
-        else if (Filtro == "TipoServicio")
+        else if (Filtro == "Servicio")
         {
-            if (TipoServicioFiltro != "")
+            if (ServicioFiltroId != 0)
             {
-                var historialesPorTipoResult = await historialesService.GetList(h =>
-                    h.Solicitud.EstadoSolicitudId == 9 && h.Solicitud.TipoServicio == TipoServicioFiltro);
-                historialesPorTipoResult.OnSuccess(historiales => ListaHistoriales = historiales);
-                historialesPorTipoResult.OnFailure(() =>
+                var historialesPorServicioResult = await historialesService.GetList(h =>
+                    h.Solicitud.EstadoSolicitudId == 9 && h.Solicitud.SolicitudesDetalle.Any(detalle => detalle.ServicioId == ServicioFiltroId));
+                historialesPorServicioResult.OnSuccess(historiales => ListaHistoriales = historiales);
+                historialesPorServicioResult.OnFailure(() =>
                     toastService.ShowError("No se pudieron consultar los historiales."));
             }
             else if (valor != "")
             {
-                var historialesPorTipoResult = await historialesService.GetList(h =>
-                    h.Solicitud.EstadoSolicitudId == 9 && h.Solicitud.TipoServicio.ToLower().Contains(valor));
-                historialesPorTipoResult.OnSuccess(historiales => ListaHistoriales = historiales);
-                historialesPorTipoResult.OnFailure(() =>
+                var historialesPorServicioResult = await historialesService.GetList(h =>
+                    h.Solicitud.EstadoSolicitudId == 9 && h.Solicitud.SolicitudesDetalle.Any(detalle => detalle.Servicio.Nombre.ToLower().Contains(valor)));
+                historialesPorServicioResult.OnSuccess(historiales => ListaHistoriales = historiales);
+                historialesPorServicioResult.OnFailure(() =>
                     toastService.ShowError("No se pudieron consultar los historiales."));
             }
             else
