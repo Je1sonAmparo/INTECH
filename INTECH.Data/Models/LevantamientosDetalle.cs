@@ -15,4 +15,7 @@ public class LevantamientosDetalle
 
     [StringLength(150, ErrorMessage = "La ubicación no puede superar los 150 caracteres")]
     public string Ubicacion { get; set; } = string.Empty;
+
+    [Range(0, double.MaxValue, ErrorMessage = "La distancia no puede ser negativa")]
+    public double DistanciaRecorrido { get; set; }
 }
