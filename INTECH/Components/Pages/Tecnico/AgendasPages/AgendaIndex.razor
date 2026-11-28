@@ -129,6 +129,9 @@
                                             <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-1 overflow-hidden"
                                                  style="@ObtenerEstiloVisita(posicion)"
                                                  @onclick="() => SeleccionarVisita(posicion.Visita)">
+                                                <div class="small fw-bold text-truncate">@posicion.Visita.HoraInicio.ToString("hh:mm tt")</div>
+                                                <div class="small text-truncate">@posicion.Visita.Solicitud.Cliente.Nombre</div>
+                                                <div class="small text-body-secondary text-truncate">@ObtenerNombreTecnico(posicion.Visita.TecnicoId)</div>
                                             </div>
                                         }
                                     </div>
@@ -183,6 +186,9 @@
                                             <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-1 overflow-hidden"
                                                  style="@ObtenerEstiloVisita(posicion)"
                                                  @onclick="() => SeleccionarVisita(posicion.Visita)">
+                                                <div class="small fw-bold text-truncate">@posicion.Visita.HoraInicio.ToString("hh:mm tt")</div>
+                                                <div class="small text-truncate">@posicion.Visita.Solicitud.Cliente.Nombre</div>
+                                                <div class="small text-body-secondary text-truncate">@ObtenerNombreTecnico(posicion.Visita.TecnicoId)</div>
                                             </div>
                                         }
                                     </div>
