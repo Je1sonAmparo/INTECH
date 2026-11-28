@@ -109,6 +109,15 @@
                                     <div class="fc-hora-fila small text-muted text-center pt-1">@($"{horaActual:00}:00")</div>
                                 }
                             </div>
+
+                            @* Columnas de la semana *@
+                            <div class="fc-grid-7 flex-grow-1">
+                                @foreach (var dia in diasSemana)
+                                {
+                                    <div class="fc-timeline border-end">
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                     else if (VistaActual == VistaAgenda.Semanal)
@@ -136,6 +145,15 @@
                                 {
                                     var horaActual = hora;
                                     <div class="fc-hora-fila small text-muted text-center pt-1">@($"{horaActual:00}:00")</div>
+                                }
+                            </div>
+
+                            @* Columnas de la semana *@
+                            <div class="fc-grid-7 flex-grow-1">
+                                @foreach (var dia in diasSemana)
+                                {
+                                    <div class="fc-timeline border-end">
+                                    </div>
                                 }
                             </div>
                         </div>
