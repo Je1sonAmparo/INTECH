@@ -21,5 +21,5 @@ public class FotosLevantamientos
 
     [ForeignKey("DetalleId")]
     [InverseProperty("FotosLevantamientos")]
-    public virtual Levantamientos Levantamiento { get; set; } = null!;
+    public virtual LevantamientosDetalle Detalle { get; set; } = null!;
 }
