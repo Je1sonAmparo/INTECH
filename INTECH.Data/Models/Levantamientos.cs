@@ -24,8 +24,6 @@ public class Levantamientos
     [Required(ErrorMessage = "Este Campo Es Requerido")]
     public TimeOnly HoraFin { get; set; } = new TimeOnly(9, 30);
 
-    public string RecorridoCableado { get; set; } = string.Empty;
-
     public string Observaciones { get; set; } = string.Empty;
 
     public bool EsBorrador { get; set; }
