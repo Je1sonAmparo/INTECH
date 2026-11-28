@@ -486,6 +486,14 @@
                         break;
                     }
                 }
+
+                if (columnaLibre == -1)
+                {
+                    columnaLibre = finesPorColumna.Count;
+                    finesPorColumna.Add(visita.HoraFin);
+                }
+
+                asignaciones.Add((visita, columnaLibre));
             }
         }
 
