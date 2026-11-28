@@ -12,4 +12,7 @@ public class LevantamientosDetalle
 
     [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un servicio")]
     public int ServicioId { get; set; }
+
+    [StringLength(150, ErrorMessage = "La ubicación no puede superar los 150 caracteres")]
+    public string Ubicacion { get; set; } = string.Empty;
 }
