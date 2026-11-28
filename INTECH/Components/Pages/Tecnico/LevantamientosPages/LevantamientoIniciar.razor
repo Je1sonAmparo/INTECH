@@ -423,6 +423,12 @@
             toastService.ShowError("Seleccione un servicio.");
             return;
         }
+
+        if (string.IsNullOrWhiteSpace(DetalleSeleccionado.Ubicacion))
+        {
+            toastService.ShowError("Ingrese la ubicación del equipo.");
+            return;
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
