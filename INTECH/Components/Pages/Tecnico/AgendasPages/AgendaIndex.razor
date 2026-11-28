@@ -114,10 +114,22 @@
                             <div class="fc-grid-7 flex-grow-1">
                                 @foreach (var dia in diasSemana)
                                 {
+                                    var visitasDia = ListaAgendas
+                                        .Where(a => a.Fecha.Date == dia.Date)
+                                        .ToList();
+
                                     <div class="fc-timeline border-end">
                                         @for (int hora = 8; hora < 18; hora++)
                                         {
                                             <div class="fc-hora-fila"></div>
+                                        }
+
+                                        @foreach (var posicion in ObtenerPosiciones(visitasDia))
+                                        {
+                                            <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-1 overflow-hidden"
+                                                 style="@ObtenerEstiloVisita(posicion)"
+                                                 @onclick="() => SeleccionarVisita(posicion.Visita)">
+                                            </div>
                                         }
                                     </div>
                                 }
@@ -156,10 +168,22 @@
                             <div class="fc-grid-7 flex-grow-1">
                                 @foreach (var dia in diasSemana)
                                 {
+                                    var visitasDia = ListaAgendas
+                                        .Where(a => a.Fecha.Date == dia.Date)
+                                        .ToList();
+
                                     <div class="fc-timeline border-end">
                                         @for (int hora = 8; hora < 18; hora++)
                                         {
                                             <div class="fc-hora-fila"></div>
+                                        }
+
+                                        @foreach (var posicion in ObtenerPosiciones(visitasDia))
+                                        {
+                                            <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-1 overflow-hidden"
+                                                 style="@ObtenerEstiloVisita(posicion)"
+                                                 @onclick="() => SeleccionarVisita(posicion.Visita)">
+                                            </div>
                                         }
                                     </div>
                                 }
