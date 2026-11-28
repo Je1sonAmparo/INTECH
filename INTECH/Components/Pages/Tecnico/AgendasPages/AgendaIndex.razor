@@ -332,6 +332,7 @@
 
     public List<Agendas> ListaAgendas { get; set; } = new List<Agendas>();
     public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
+    private Dictionary<string, string> NombresTecnicos { get; set; } = new Dictionary<string, string>();
     public Agendas? VisitaSeleccionada { get; set; }
     public VistaAgenda VistaActual { get; set; } = VistaAgenda.Hoy;
     public DateTime FechaReferencia { get; set; } = DateTime.Today;
