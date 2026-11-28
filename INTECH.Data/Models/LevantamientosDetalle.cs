@@ -24,4 +24,6 @@ public class LevantamientosDetalle
 
     [StringLength(1000, ErrorMessage = "La descripción técnica no puede superar los 1000 caracteres")]
     public string DescripcionTecnica { get; set; } = string.Empty;
+
+    public bool Viable { get; set; } = true;
 }
