@@ -65,6 +65,19 @@
                 @* Detalles del Levantamiento *@
                 <div class="border border-success p-3 mt-3">
                     <h5>Detalles del Levantamiento</h5>
+
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Servicio</strong></label>
+                            <InputSelect class="form-control form-select" @bind-Value="DetalleSeleccionado.ServicioId" disabled="@(SoloLectura || DetalleEditando != null)">
+                                <option value="0" selected disabled>Elija un servicio</option>
+                                @foreach (var detalle in ServiciosDisponibles)
+                                {
+                                    <option value="@detalle.ServicioId">@detalle.Servicio.Nombre (× @detalle.Cantidad)</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
                 </div>
 
                 @* Observaciones *@
