@@ -473,6 +473,20 @@
         {
             var finesPorColumna = new List<TimeOnly>();
             var asignaciones = new List<(Agendas Visita, int Columna)>();
+
+            foreach (var visita in grupo)
+            {
+                int columnaLibre = -1;
+                for (int i = 0; i < finesPorColumna.Count; i++)
+                {
+                    if (finesPorColumna[i] <= visita.HoraInicio)
+                    {
+                        columnaLibre = i;
+                        finesPorColumna[i] = visita.HoraFin;
+                        break;
+                    }
+                }
+            }
         }
 
         return resultado;
