@@ -61,6 +61,8 @@ html, body {
 
 .tecnico-content {
     min-width: 0;
+    height: auto;
+    overflow: visible;
 }
 
 .tecnico-layout a:not(.btn):not(.nav-link):not(.tecnico-marca):not(.col-title) {
