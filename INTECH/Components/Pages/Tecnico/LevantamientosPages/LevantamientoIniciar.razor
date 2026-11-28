@@ -572,7 +572,12 @@
 
     private void RemoverFoto(FotosLevantamientos foto)
     {
-        Levantamiento.FotosLevantamientos.Remove(foto);
+        if (SoloLectura)
+        {
+            return;
+        }
+
+        DetalleSeleccionado.FotosLevantamientos.Remove(foto);
     }
 
     private void LimpiarCampos()
