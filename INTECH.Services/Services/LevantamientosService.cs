@@ -171,7 +171,7 @@ public class LevantamientosService(
             .Include(l => l.Solicitud)
                 .ThenInclude(s => s.SolicitudesDetalle)
                     .ThenInclude(detalle => detalle.Servicio)
-            .Include(l => l.FotosLevantamientos)
+            .Include(l => l.LevantamientosDetalle)
             .Where(l => !l.IsDeleted)
             .Where(criterio)
             .AsNoTracking()
