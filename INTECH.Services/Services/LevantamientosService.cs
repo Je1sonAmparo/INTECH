@@ -83,7 +83,8 @@ public class LevantamientosService(
     {
         await using var contexto = await contextFactory.CreateDbContextAsync();
         var levantamientoExistente = await contexto.Levantamientos
-            .Include(l => l.FotosLevantamientos)
+            .Include(l => l.LevantamientosDetalle)
+                .ThenInclude(d => d.FotosLevantamientos)
             .SingleOrDefaultAsync(l => l.LevantamientoId == levantamiento.LevantamientoId && !l.IsDeleted);
         if (levantamientoExistente == null)
         {
