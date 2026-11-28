@@ -35,8 +35,7 @@
                     @* Fecha de Solicitud *@
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><strong>Fecha de Solicitud</strong></label>
-                        <InputDate class="form-control" @bind-Value="Solicitud.FechaSolicitud"></InputDate>
-                        <ValidationMessage For="(() => Solicitud.FechaSolicitud)" />
+                        <input class="form-control" value="@Solicitud.FechaSolicitud.ToString("dd/MM/yyyy")" disabled />
                     </div>
                 </div>
 
@@ -193,6 +192,7 @@
             return;
         }
 
+        Solicitud.FechaSolicitud = DateTime.Today;
         Solicitud.Direccion = Solicitud.Direccion.Trim();
         Solicitud.ObservacionesCliente = Solicitud.ObservacionesCliente.Trim();
 
