@@ -30,6 +30,9 @@ public class Levantamientos
     [Range(0, int.MaxValue, ErrorMessage = "El breaker principal no puede ser negativo")]
     public int BreakerPrincipal { get; set; }
 
+    [Range(0, int.MaxValue, ErrorMessage = "El consumo mensual no puede ser negativo")]
+    public int ConsumoMensual { get; set; }
+
     public string Observaciones { get; set; } = string.Empty;
 
     public bool EsBorrador { get; set; }
