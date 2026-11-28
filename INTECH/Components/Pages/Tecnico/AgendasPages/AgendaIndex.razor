@@ -104,48 +104,17 @@
                     {
                         var diasSemana = ObtenerDiasSemana();
 
-                        <div class="table-responsive">
-                            <table class="table table-bordered mb-0 align-middle">
-                                <thead class="table-light text-center">
-                                    <tr>
-                                        <th class="fc-col-hora">Hora</th>
-                                        @foreach (var dia in diasSemana)
-                                        {
-                                            var esHoy = dia.Date == DateTime.Today;
-                                            <th class="@(esHoy ? "table-primary" : "")">
-                                                <div class="small text-uppercase text-muted">@dia.ToString("ddd", Cultura)</div>
-                                                <div class="fs-6">@dia.Day</div>
-                                            </th>
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (int hora = 8; hora <= 18; hora++)
-                                    {
-                                        var horaActual = hora;
-                                        <tr>
-                                            <td class="text-center text-muted small bg-light">@($"{horaActual:00}:00")</td>
-                                            @foreach (var dia in diasSemana)
-                                            {
-                                                var visitasHora = ListaAgendas
-                                                    .Where(a => a.Fecha.Date == dia.Date && a.HoraInicio.Hour == horaActual)
-                                                    .OrderBy(a => a.HoraInicio)
-                                                    .ToList();
-
-                                                <td class="p-1 fc-slot-cell">
-                                                    @foreach (var visita in visitasHora)
-                                                    {
-                                                        <div class="badge bg-primary d-block text-start text-truncate mb-1 p-1 fc-event-item"
-                                                             @onclick="() => SeleccionarVisita(visita)">
-                                                            @visita.HoraInicio.ToString("HH:mm") - #@visita.SolicitudId @visita.Solicitud.Cliente.Nombre
-                                                        </div>
-                                                    }
-                                                </td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="d-flex border rounded-top bg-light text-center">
+                            <div class="fc-col-hora border-end py-2 fw-semibold small text-muted">Hora</div>
+                            <div class="fc-grid-7 flex-grow-1">
+                                @foreach (var dia in diasSemana)
+                                {
+                                    <div class="border-end py-1">
+                                        <div class="small text-uppercase text-muted">@dia.ToString("ddd", Cultura)</div>
+                                        <div class="fs-6">@dia.Day</div>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                     else
