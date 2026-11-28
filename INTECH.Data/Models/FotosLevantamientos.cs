@@ -8,7 +8,7 @@ public class FotosLevantamientos
     [Key]
     public int FotoLevantamientoId { get; set; }
 
-    public int LevantamientoId { get; set; }
+    public int DetalleId { get; set; }
 
     [Required(ErrorMessage = "Este Campo Es Requerido")]
     public string NombreArchivo { get; set; } = string.Empty;
