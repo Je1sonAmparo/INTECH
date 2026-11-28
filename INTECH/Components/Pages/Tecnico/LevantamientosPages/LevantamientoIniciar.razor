@@ -441,6 +441,12 @@
             toastService.ShowError("La distancia no puede ser negativa.");
             return;
         }
+
+        if (DetalleEditando == null && Levantamiento.LevantamientosDetalle.Any(d => d.ServicioId == DetalleSeleccionado.ServicioId))
+        {
+            toastService.ShowError("Ese servicio ya fue evaluado.");
+            return;
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
