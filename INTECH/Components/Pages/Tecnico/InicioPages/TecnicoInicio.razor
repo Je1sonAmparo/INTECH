@@ -1,3 +1,8 @@
+@page "/Tecnico/Inicio"
+@attribute [Authorize(Roles = "Técnico")]
+
+<PageTitle>Inicio | INTECH</PageTitle>
+
 <h1 class="h3 fw-bold">¡Bienvenido, @Nombre!</h1>
 <p class="text-body-secondary mb-4">Resumen de la operación de hoy.</p>
 
@@ -98,6 +103,17 @@
 </section>
 
 @code {
-    [Parameter]
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+
     public string? Nombre { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthStateTask != null)
+        {
+            var authState = await AuthStateTask;
+            Nombre = authState.User.FindFirst("NombreCompleto")?.Value ?? authState.User.Identity?.Name;
+        }
+    }
 }
