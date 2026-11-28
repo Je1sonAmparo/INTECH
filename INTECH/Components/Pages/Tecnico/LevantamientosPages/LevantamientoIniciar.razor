@@ -537,6 +537,11 @@
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
     {
+        if (SoloLectura)
+        {
+            return;
+        }
+
         var tamanoMaximo = 5 * 1024 * 1024;
         foreach (var archivo in e.GetMultipleFiles(10))
         {
