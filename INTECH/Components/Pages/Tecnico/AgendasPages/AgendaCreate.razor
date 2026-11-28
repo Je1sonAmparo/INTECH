@@ -35,13 +35,7 @@
                 @* Técnico Asignado *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Técnico asignado</strong></label>
-                    <InputSelect class="form-control form-select" @bind-Value="Agenda.TecnicoId">
-                        <option value="">Sin asignar</option>
-                        @foreach (var tecnico in ListaTecnicos)
-                        {
-                            <option value="@tecnico.Id">@tecnico.UserName</option>
-                        }
-                    </InputSelect>
+                    <input class="form-control" value="@NombreTecnico" disabled />
                 </div>
 
                 @* Dirección *@
@@ -88,7 +82,7 @@
 
     public Agendas Agenda { get; set; } = new Agendas();
     public List<Solicitudes> ListaSolicitudes { get; set; } = new List<Solicitudes>();
-    public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
+    private string NombreTecnico { get; set; } = string.Empty;
     private string DireccionSeleccionada { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -97,18 +91,11 @@
         solicitudesResult.OnSuccess(solicitudes => ListaSolicitudes = solicitudes);
         solicitudesResult.OnFailure(() => toastService.ShowError("No se pudieron consultar las solicitudes."));
 
-        var tecnicos = await userManager.GetUsersInRoleAsync("Técnico");
-        ListaTecnicos = tecnicos.ToList();
-
         if (AuthStateTask != null)
         {
             var authState = await AuthStateTask;
-            var usuarioActual = authState.User.Identity?.Name;
-            var tecnicoActual = ListaTecnicos.FirstOrDefault(t => t.UserName == usuarioActual);
-            if (tecnicoActual != null)
-            {
-                Agenda.TecnicoId = tecnicoActual.Id;
-            }
+            Agenda.TecnicoId = userManager.GetUserId(authState.User);
+            NombreTecnico = authState.User.FindFirst("NombreCompleto")?.Value ?? authState.User.Identity?.Name ?? string.Empty;
         }
     }
 
