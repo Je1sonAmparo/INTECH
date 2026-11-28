@@ -73,6 +73,12 @@
                                 <tr>
                                     <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
                                     <td>@detalle.Ubicacion</td>
+                                    <td>@detalle.DistanciaRecorrido</td>
+                                    <td>
+                                        <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
+                                            @(detalle.Viable ? "Sí" : "No")
+                                        </span>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -143,6 +149,12 @@
                                 <tr>
                                     <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
                                     <td>@detalle.Ubicacion</td>
+                                    <td>@detalle.DistanciaRecorrido</td>
+                                    <td>
+                                        <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
+                                            @(detalle.Viable ? "Sí" : "No")
+                                        </span>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -255,6 +267,12 @@
                                 <tr>
                                     <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
                                     <td>@detalle.Ubicacion</td>
+                                    <td>@detalle.DistanciaRecorrido</td>
+                                    <td>
+                                        <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
+                                            @(detalle.Viable ? "Sí" : "No")
+                                        </span>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
