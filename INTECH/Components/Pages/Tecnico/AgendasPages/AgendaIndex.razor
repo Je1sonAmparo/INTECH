@@ -345,6 +345,15 @@
         var tecnicos = await userManager.GetUsersInRoleAsync("Técnico");
         ListaTecnicos = tecnicos.ToList();
 
+        foreach (var tecnico in ListaTecnicos)
+        {
+            var claims = await userManager.GetClaimsAsync(tecnico);
+            var nombreCompleto = claims.FirstOrDefault(c => c.Type == "NombreCompleto")?.Value;
+            NombresTecnicos[tecnico.Id] = string.IsNullOrWhiteSpace(nombreCompleto)
+                ? (tecnico.UserName ?? "Sin asignar")
+                : nombreCompleto;
+        }
+
         await CargarAgendas();
     }
 
