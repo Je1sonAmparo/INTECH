@@ -37,7 +37,7 @@
                                 <option value="SIN_ASIGNAR">Sin asignar</option>
                                 @foreach (var tecnico in ListaTecnicos)
                                 {
-                                    <option value="@tecnico.Id">@tecnico.UserName</option>
+                                    <option value="@tecnico.Id">@ObtenerNombreTecnico(tecnico.Id)</option>
                                 }
                             </InputSelect>
                         </div>
