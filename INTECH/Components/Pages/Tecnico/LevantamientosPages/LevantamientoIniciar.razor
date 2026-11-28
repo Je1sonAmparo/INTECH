@@ -87,6 +87,14 @@
                             <label class="form-label"><strong>Distancia (m)</strong></label>
                             <InputNumber class="form-control" @bind-Value="DetalleSeleccionado.DistanciaRecorrido" disabled="@SoloLectura" placeholder="Ej.: 15" />
                         </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label"><strong>Viable</strong></label>
+                            <InputSelect class="form-control form-select" @bind-Value="DetalleSeleccionado.Viable" disabled="@SoloLectura">
+                                <option value="true">Sí</option>
+                                <option value="false">No</option>
+                            </InputSelect>
+                        </div>
                     </div>
                 </div>
 
