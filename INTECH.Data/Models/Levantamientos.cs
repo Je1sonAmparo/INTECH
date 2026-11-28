@@ -24,6 +24,9 @@ public class Levantamientos
     [Required(ErrorMessage = "Este Campo Es Requerido")]
     public TimeOnly HoraFin { get; set; } = new TimeOnly(9, 30);
 
+    [Range(0, int.MaxValue, ErrorMessage = "La tensión medida no puede ser negativa")]
+    public int TensionMedida { get; set; }
+
     public string Observaciones { get; set; } = string.Empty;
 
     public bool EsBorrador { get; set; }
