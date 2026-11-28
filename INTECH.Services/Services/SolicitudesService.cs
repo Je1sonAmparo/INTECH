@@ -42,15 +42,31 @@ public class SolicitudesService(
     private async Task<bool> Modificar(Solicitudes solicitud)
     {
         await using var contexto = await contextFactory.CreateDbContextAsync();
-        var existente = await contexto.Solicitudes
-            .AsNoTracking()
-            .FirstOrDefaultAsync(s => s.SolicitudId == solicitud.SolicitudId && !s.IsDeleted);
-        if (existente == null || existente.EstadoSolicitudId == 9)
+        var solicitudExistente = await contexto.Solicitudes
+            .Include(s => s.SolicitudesDetalle)
+            .SingleOrDefaultAsync(s => s.SolicitudId == solicitud.SolicitudId);
+        if (solicitudExistente == null)
         {
             return false;
         }
 
-        contexto.Update(solicitud);
+        solicitudExistente.ClienteId = solicitud.ClienteId;
+        solicitudExistente.Direccion = solicitud.Direccion;
+        solicitudExistente.ObservacionesCliente = solicitud.ObservacionesCliente;
+        solicitudExistente.FechaSolicitud = solicitud.FechaSolicitud;
+        solicitudExistente.EstadoSolicitudId = solicitud.EstadoSolicitudId;
+
+        contexto.RemoveRange(solicitudExistente.SolicitudesDetalle);
+        foreach (var detalle in solicitud.SolicitudesDetalle)
+        {
+            solicitudExistente.SolicitudesDetalle.Add(new SolicitudesDetalle
+            {
+                SolicitudId = solicitudExistente.SolicitudId,
+                ServicioId = detalle.ServicioId,
+                Cantidad = detalle.Cantidad
+            });
+        }
+
         return await contexto.SaveChangesAsync() > 0;
     }
 
@@ -58,6 +74,8 @@ public class SolicitudesService(
     {
         await using var contexto = await contextFactory.CreateDbContextAsync();
         return await contexto.Solicitudes
+            .Include(s => s.SolicitudesDetalle)
+                .ThenInclude(detalle => detalle.Servicio)
             .FirstOrDefaultAsync(s => s.SolicitudId == solicitudId && !s.IsDeleted);
     }
 
@@ -68,6 +86,8 @@ public class SolicitudesService(
             .Include(s => s.Cliente)
             .ThenInclude(c => c.TelefonosClientes)
             .Include(s => s.EstadoSolicitud)
+            .Include(s => s.SolicitudesDetalle)
+                .ThenInclude(detalle => detalle.Servicio)
             .Where(s => !s.IsDeleted)
             .Where(criterio)
             .AsNoTracking()
