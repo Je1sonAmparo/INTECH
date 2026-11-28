@@ -67,6 +67,15 @@
                                 <th>Opciones</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach (var detalle in Levantamiento.LevantamientosDetalle)
+                            {
+                                <tr>
+                                    <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
+                                    <td>@detalle.Ubicacion</td>
+                                </tr>
+                            }
+                        </tbody>
                     </table>
                 </div>
 
@@ -128,6 +137,15 @@
                                 <th>Opciones</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach (var detalle in Levantamiento.LevantamientosDetalle)
+                            {
+                                <tr>
+                                    <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
+                                    <td>@detalle.Ubicacion</td>
+                                </tr>
+                            }
+                        </tbody>
                     </table>
                 </div>
 
@@ -231,6 +249,15 @@
                                 <th>Opciones</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach (var detalle in Levantamiento.LevantamientosDetalle)
+                            {
+                                <tr>
+                                    <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
+                                    <td>@detalle.Ubicacion</td>
+                                </tr>
+                            }
+                        </tbody>
                     </table>
                 </div>
 
