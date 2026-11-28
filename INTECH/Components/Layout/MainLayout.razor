@@ -1,12 +1,13 @@
 @inherits LayoutComponentBase
 @using INTECH.Components.Account.Shared
 @using INTECH.Components.Layout.Tecnico
+@using INTECH.Components.Layout.Gerente
 
 <AuthorizeView>
     <Authorized Context="sesion">
         <Toasts class="p-3" Placement="ToastsPlacement.TopRight" />
 
-        @if (sesion.User.IsInRole("Técnico"))
+        @if (sesion.User.IsInRole("Técnico") || sesion.User.IsInRole("Gerente"))
         {
             <div class="tecnico-layout d-flex flex-column min-vh-100">
                 <header class="tecnico-header sticky-top d-flex flex-wrap align-items-center gap-3 px-4 py-3">
@@ -15,7 +16,14 @@
                 </header>
                 <div class="d-flex flex-column flex-md-row flex-grow-1">
                     <aside class="tecnico-sidebar bg-white border-end d-flex flex-column flex-shrink-0">
-                        <TecnicoNavMenu />
+                        @if (sesion.User.IsInRole("Gerente"))
+                        {
+                            <GerenteNavMenu />
+                        }
+                        else
+                        {
+                            <TecnicoNavMenu />
+                        }
                     </aside>
                     <main class="tecnico-content flex-grow-1 p-3 p-lg-4 bg-primary bg-opacity-10">
                         @Body
