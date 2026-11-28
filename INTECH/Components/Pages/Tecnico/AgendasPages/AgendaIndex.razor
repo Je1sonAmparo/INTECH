@@ -64,6 +64,16 @@
                             .ToList();
 
                         <div class="d-flex border rounded bg-white">
+                            @* Columna de horas *@
+                            <div class="fc-col-hora border-end bg-light">
+                                @for (int hora = 8; hora < 18; hora++)
+                                {
+                                    var horaActual = hora;
+                                    <div class="fc-hora-fila small text-body-secondary text-center pt-1">
+                                        @($"{(horaActual > 12 ? horaActual - 12 : horaActual):00} {(horaActual >= 12 ? "PM" : "AM")}")
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                     else if (VistaActual == VistaAgenda.Semanal)
