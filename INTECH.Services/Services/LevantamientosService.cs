@@ -102,6 +102,7 @@ public class LevantamientosService(
         levantamientoExistente.HoraInicio = levantamiento.HoraInicio;
         levantamientoExistente.HoraFin = levantamiento.HoraFin;
         levantamientoExistente.TensionMedida = levantamiento.TensionMedida;
+        levantamientoExistente.BreakerPrincipal = levantamiento.BreakerPrincipal;
         levantamientoExistente.Observaciones = levantamiento.Observaciones;
         levantamientoExistente.EsBorrador = levantamiento.EsBorrador;
 
