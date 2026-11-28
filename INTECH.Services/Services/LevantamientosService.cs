@@ -131,6 +131,9 @@ public class LevantamientosService(
                 .ThenInclude(s => s.Cliente)
             .Include(l => l.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(l => l.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .Include(l => l.FotosLevantamientos)
             .FirstOrDefaultAsync(l => l.LevantamientoId == levantamientoId && !l.IsDeleted);
     }
@@ -143,6 +146,9 @@ public class LevantamientosService(
                 .ThenInclude(s => s.Cliente)
             .Include(l => l.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(l => l.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .Include(l => l.FotosLevantamientos)
             .Where(l => !l.IsDeleted)
             .Where(criterio)

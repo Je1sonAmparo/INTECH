@@ -14,12 +14,11 @@ public class Solicitudes
     public int ClienteId { get; set; }
 
     [Required(ErrorMessage = "Este Campo Es Requerido")]
-    [StringLength(150, ErrorMessage = "El tipo de servicio no puede superar los 150 caracteres")]
-    public string TipoServicio { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Este Campo Es Requerido")]
     [StringLength(250, ErrorMessage = "La dirección no puede superar los 250 caracteres")]
     public string Direccion { get; set; } = string.Empty;
+
+    [StringLength(1000, ErrorMessage = "Las observaciones no pueden superar los 1000 caracteres")]
+    public string ObservacionesCliente { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Este Campo Es Requerido")]
     public DateTime FechaSolicitud { get; set; } = DateTime.Today;

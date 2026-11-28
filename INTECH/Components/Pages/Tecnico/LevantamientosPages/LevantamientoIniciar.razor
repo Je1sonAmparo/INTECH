@@ -25,10 +25,10 @@
                     <input class="form-control" value="@Levantamiento.Solicitud?.Cliente?.Nombre" disabled />
                 </div>
 
-                @* Tipo de Servicio *@
+                @* Servicios *@
                 <div class="mb-3">
-                    <label class="form-label"><strong>Tipo de servicio</strong></label>
-                    <input class="form-control" value="@Levantamiento.Solicitud?.TipoServicio" disabled />
+                    <label class="form-label"><strong>Servicios</strong></label>
+                    <input class="form-control" value="@(Levantamiento.Solicitud == null ? "" : string.Join(", ", Levantamiento.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre)))" disabled />
                 </div>
 
                 @* Técnico Asignado *@

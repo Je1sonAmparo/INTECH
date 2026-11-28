@@ -28,7 +28,7 @@
                 <div class="col-12 col-md-6">
                     <div class="p-3 bg-light border rounded h-100">
                         <small class="text-body-secondary text-uppercase d-block">Tipo de Servicio</small>
-                        <strong>@Historial.Solicitud?.TipoServicio</strong>
+                        <strong>@(Historial.Solicitud == null ? "" : string.Join(", ", Historial.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre)))</strong>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">

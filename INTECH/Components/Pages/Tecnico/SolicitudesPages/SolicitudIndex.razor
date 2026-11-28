@@ -31,7 +31,7 @@
                         <option value="" selected disabled>Elija una opci&oacute;n</option>
                         <option value="SolicitudId">SolicitudId</option>
                         <option value="Cliente">Cliente</option>
-                        <option value="TipoServicio">Tipo de Servicio</option>
+                        <option value="Servicio">Servicio</option>
                         <option value="Estado">Estado</option>
                         <option value="Fecha">Fecha</option>
                     </InputSelect>
@@ -69,7 +69,9 @@
                 <QuickGrid Items="ListaSolicitudes.AsQueryable()" Class="table table-hover mt-3">
                     <PropertyColumn Property="@(s => s.SolicitudId)" Title="SolicitudId" Sortable="true" />
                     <PropertyColumn Property="@(s => s.Cliente.Nombre)" Title="Cliente" Sortable="true" />
-                    <PropertyColumn Property="@(s => s.TipoServicio)" Title="Tipo de Servicio" Sortable="true" />
+                    <TemplateColumn Title="Servicios">
+                        @string.Join(", ", context.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre))
+                    </TemplateColumn>
                     <PropertyColumn Property="@(s => s.FechaSolicitud)" Title="Fecha de Solicitud" Format="dd/MM/yyyy" Sortable="true" />
                     <TemplateColumn Title="Estado">
                         <span class="badge @ObtenerColorEstado(context.EstadoSolicitudId)">@context.EstadoSolicitud.Nombre</span>
@@ -257,11 +259,11 @@
             solicitudesPorClienteResult.OnFailure(() =>
                 toastService.ShowError("No se pudieron consultar las solicitudes."));
         }
-        else if (Filtro == "TipoServicio")
+        else if (Filtro == "Servicio")
         {
-            var solicitudesPorTipoResult = await solicitudesService.GetList(s => s.TipoServicio.ToLower().Contains(valor));
-            solicitudesPorTipoResult.OnSuccess(solicitudes => ListaSolicitudes = solicitudes);
-            solicitudesPorTipoResult.OnFailure(() =>
+            var solicitudesPorServicioResult = await solicitudesService.GetList(s => s.SolicitudesDetalle.Any(detalle => detalle.Servicio.Nombre.ToLower().Contains(valor)));
+            solicitudesPorServicioResult.OnSuccess(solicitudes => ListaSolicitudes = solicitudes);
+            solicitudesPorServicioResult.OnFailure(() =>
                 toastService.ShowError("No se pudieron consultar las solicitudes."));
         }
         else

@@ -4,6 +4,7 @@
 @inject LevantamientosService levantamientosService
 @inject EstadosSolicitudesService estadosSolicitudesService
 @inject Microsoft.AspNetCore.Identity.UserManager<INTECH.Data.ApplicationUser> userManager
+@inject ServiciosService serviciosService
 @inject ToastService toastService
 
 <PageTitle>Registro de Levantamientos</PageTitle>
@@ -33,7 +34,7 @@
                         <option value="LevantamientoId">LevantamientoId</option>
                         <option value="SolicitudId">SolicitudId</option>
                         <option value="Cliente">Cliente</option>
-                        <option value="TipoServicio">Tipo de Servicio</option>
+                        <option value="Servicio">Servicio</option>
                         <option value="Fecha">Fecha Programada</option>
                         <option value="Estado">Estado</option>
                         <option value="Tecnico">Técnico</option>
@@ -56,14 +57,13 @@
                     <InputDate class="form-control" @bind-Value="Hasta"></InputDate>
                 </div>
                 <div class="col-3">
-                    <label class="col-form-label"><strong>Tipo de servicio</strong></label>
-                    <InputSelect class="form-select" @bind-Value="TipoServicioFiltro">
-                        <option value="">Todos</option>
-                        <option value="Cableado Estructurado">Cableado Estructurado</option>
-                        <option value="Instalación de Paneles Solares">Instalación de Paneles Solares</option>
-                        <option value="Instalación de Planta Eléctrica">Instalación de Planta Eléctrica</option>
-                        <option value="Instalación de Sistema UPS">Instalación de Sistema UPS</option>
-                        <option value="Mantenimiento Eléctrico">Mantenimiento Eléctrico</option>
+                    <label class="col-form-label"><strong>Servicio</strong></label>
+                    <InputSelect class="form-select" @bind-Value="ServicioFiltroId">
+                        <option value="0">Todos</option>
+                        @foreach (var servicio in ListaServicios)
+                        {
+                            <option value="@servicio.ServicioId">@servicio.Nombre</option>
+                        }
                     </InputSelect>
                 </div>
                 <div class="col-3">
@@ -97,7 +97,9 @@
                         Solicitud #@context.SolicitudId
                     </TemplateColumn>
                     <PropertyColumn Property="@(l => l.Solicitud.Cliente.Nombre)" Title="Cliente" Sortable="true" />
-                    <PropertyColumn Property="@(l => l.Solicitud.TipoServicio)" Title="Tipo de Servicio" Sortable="true" />
+                    <TemplateColumn Title="Servicios">
+                        @string.Join(", ", context.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre))
+                    </TemplateColumn>
                     <TemplateColumn Title="Fecha Programada">
                         @context.FechaProgramada.ToString("dd/MM/yyyy") · @context.HoraInicio.ToString("hh:mm tt") - @context.HoraFin.ToString("hh:mm tt")
                     </TemplateColumn>
@@ -152,6 +154,7 @@
 </div>
 
 @code {
+    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
     public List<Levantamientos> ListaLevantamientos { get; set; } = new List<Levantamientos>();
     public List<EstadosSolicitudes> ListaEstadosSolicitudes { get; set; } = new List<EstadosSolicitudes>();
     public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
@@ -159,13 +162,17 @@
     public string ValorFiltro { get; set; } = string.Empty;
     public DateTime? Desde { get; set; }
     public DateTime? Hasta { get; set; }
-    public string TipoServicioFiltro { get; set; } = string.Empty;
+    public int ServicioFiltroId { get; set; }
     public int EstadoFiltroId { get; set; }
     public string TecnicoFiltroId { get; set; } = string.Empty;
     private int levantamientoIdAEliminar;
 
     protected override async Task OnInitializedAsync()
     {
+        var serviciosResult = await serviciosService.GetList(s => true);
+        serviciosResult.OnSuccess(servicios => ListaServicios = servicios);
+        serviciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los servicios."));
+
         var estadosSolicitudesResult = await estadosSolicitudesService.GetList(e => true);
         estadosSolicitudesResult.OnSuccess(estadosSolicitudes => ListaEstadosSolicitudes = estadosSolicitudes);
         estadosSolicitudesResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los estados."));
@@ -276,20 +283,20 @@
             levantamientosPorEstadoResult.OnFailure(() =>
                 toastService.ShowError("No se pudieron consultar los levantamientos."));
         }
-        else if (Filtro == "TipoServicio")
+        else if (Filtro == "Servicio")
         {
-            if (TipoServicioFiltro != "")
+            if (ServicioFiltroId != 0)
             {
-                var levantamientosPorTipoResult = await levantamientosService.GetList(l => l.Solicitud.TipoServicio == TipoServicioFiltro);
-                levantamientosPorTipoResult.OnSuccess(levantamientos => ListaLevantamientos = levantamientos);
-                levantamientosPorTipoResult.OnFailure(() =>
+                var levantamientosPorServicioResult = await levantamientosService.GetList(l => l.Solicitud.SolicitudesDetalle.Any(detalle => detalle.ServicioId == ServicioFiltroId));
+                levantamientosPorServicioResult.OnSuccess(levantamientos => ListaLevantamientos = levantamientos);
+                levantamientosPorServicioResult.OnFailure(() =>
                     toastService.ShowError("No se pudieron consultar los levantamientos."));
             }
             else if (valor != "")
             {
-                var levantamientosPorTipoResult = await levantamientosService.GetList(l => l.Solicitud.TipoServicio.ToLower().Contains(valor));
-                levantamientosPorTipoResult.OnSuccess(levantamientos => ListaLevantamientos = levantamientos);
-                levantamientosPorTipoResult.OnFailure(() =>
+                var levantamientosPorServicioResult = await levantamientosService.GetList(l => l.Solicitud.SolicitudesDetalle.Any(detalle => detalle.Servicio.Nombre.ToLower().Contains(valor)));
+                levantamientosPorServicioResult.OnSuccess(levantamientos => ListaLevantamientos = levantamientos);
+                levantamientosPorServicioResult.OnFailure(() =>
                     toastService.ShowError("No se pudieron consultar los levantamientos."));
             }
             else

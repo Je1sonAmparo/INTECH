@@ -4,6 +4,7 @@
 @inject OrdenesTrabajoService ordenesTrabajoService
 @inject SolicitudesService solicitudesService
 @inject EstadosSolicitudesService estadosSolicitudesService
+@inject ServiciosService serviciosService
 @inject ToastService toastService
 
 <PageTitle>Registro de Órdenes de Trabajo</PageTitle>
@@ -32,7 +33,7 @@
                         <option value="OrdenTrabajoId">OrdenTrabajoId</option>
                         <option value="SolicitudId">SolicitudId</option>
                         <option value="Cliente">Cliente</option>
-                        <option value="TipoServicio">Tipo de Servicio</option>
+                        <option value="Servicio">Servicio</option>
                         <option value="Fecha">Fecha</option>
                         <option value="Estado">Estado</option>
                     </InputSelect>
@@ -54,14 +55,13 @@
                     <InputDate class="form-control" @bind-Value="Hasta"></InputDate>
                 </div>
                 <div class="col-3">
-                    <label class="col-form-label"><strong>Tipo de servicio</strong></label>
-                    <InputSelect class="form-select" @bind-Value="TipoServicioFiltro">
-                        <option value="">Todos</option>
-                        <option value="Cableado Estructurado">Cableado Estructurado</option>
-                        <option value="Instalación de Paneles Solares">Instalación de Paneles Solares</option>
-                        <option value="Instalación de Planta Eléctrica">Instalación de Planta Eléctrica</option>
-                        <option value="Instalación de Sistema UPS">Instalación de Sistema UPS</option>
-                        <option value="Mantenimiento Eléctrico">Mantenimiento Eléctrico</option>
+                    <label class="col-form-label"><strong>Servicio</strong></label>
+                    <InputSelect class="form-select" @bind-Value="ServicioFiltroId">
+                        <option value="0">Todos</option>
+                        @foreach (var servicio in ListaServicios)
+                        {
+                            <option value="@servicio.ServicioId">@servicio.Nombre</option>
+                        }
                     </InputSelect>
                 </div>
                 <div class="col-3">
@@ -82,7 +82,9 @@
                     <PropertyColumn Property="@(o => o.OrdenTrabajoId)" Title="OrdenTrabajoId" Sortable="true" />
                     <PropertyColumn Property="@(o => o.SolicitudId)" Title="SolicitudId" Sortable="true" />
                     <PropertyColumn Property="@(o => o.Solicitud.Cliente.Nombre)" Title="Cliente" Sortable="true" />
-                    <PropertyColumn Property="@(o => o.Solicitud.TipoServicio)" Title="Tipo de Servicio" Sortable="true" />
+                    <TemplateColumn Title="Servicios">
+                        @string.Join(", ", context.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre))
+                    </TemplateColumn>
                     <PropertyColumn Property="@(o => o.Tareas)" Title="Tareas" Sortable="true" />
                     <PropertyColumn Property="@(o => o.Materiales)" Title="Materiales" Sortable="true" />
                     <PropertyColumn Property="@(o => o.InstruccionesCampo)" Title="Instrucciones" Sortable="true" />
@@ -132,18 +134,23 @@
 </div>
 
 @code {
+    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
     public List<OrdenesTrabajo> ListaOrdenesTrabajo { get; set; } = new List<OrdenesTrabajo>();
     public List<EstadosSolicitudes> ListaEstadosSolicitudes { get; set; } = new List<EstadosSolicitudes>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
     public DateTime? Desde { get; set; }
     public DateTime? Hasta { get; set; }
-    public string TipoServicioFiltro { get; set; } = string.Empty;
+    public int ServicioFiltroId { get; set; }
     public int EstadoFiltroId { get; set; }
     private int ordenTrabajoIdAEliminar;
 
     protected override async Task OnInitializedAsync()
     {
+        var serviciosResult = await serviciosService.GetList(s => true);
+        serviciosResult.OnSuccess(servicios => ListaServicios = servicios);
+        serviciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los servicios."));
+
         var estadosSolicitudesResult = await estadosSolicitudesService.GetList(e =>
             e.EstadoSolicitudId == 2 || e.EstadoSolicitudId == 8 || e.EstadoSolicitudId == 9);
         estadosSolicitudesResult.OnSuccess(estadosSolicitudes => ListaEstadosSolicitudes = estadosSolicitudes);
@@ -269,20 +276,20 @@
             ordenesPorEstadoResult.OnFailure(() =>
                 toastService.ShowError("No se pudieron consultar las órdenes de trabajo."));
         }
-        else if (Filtro == "TipoServicio")
+        else if (Filtro == "Servicio")
         {
-            if (TipoServicioFiltro != "")
+            if (ServicioFiltroId != 0)
             {
-                var ordenesPorTipoResult = await ordenesTrabajoService.GetList(o => o.Solicitud.TipoServicio == TipoServicioFiltro);
-                ordenesPorTipoResult.OnSuccess(ordenes => ListaOrdenesTrabajo = ordenes);
-                ordenesPorTipoResult.OnFailure(() =>
+                var ordenesPorServicioResult = await ordenesTrabajoService.GetList(o => o.Solicitud.SolicitudesDetalle.Any(detalle => detalle.ServicioId == ServicioFiltroId));
+                ordenesPorServicioResult.OnSuccess(ordenes => ListaOrdenesTrabajo = ordenes);
+                ordenesPorServicioResult.OnFailure(() =>
                     toastService.ShowError("No se pudieron consultar las órdenes de trabajo."));
             }
             else if (valor != "")
             {
-                var ordenesPorTipoResult = await ordenesTrabajoService.GetList(o => o.Solicitud.TipoServicio.ToLower().Contains(valor));
-                ordenesPorTipoResult.OnSuccess(ordenes => ListaOrdenesTrabajo = ordenes);
-                ordenesPorTipoResult.OnFailure(() =>
+                var ordenesPorServicioResult = await ordenesTrabajoService.GetList(o => o.Solicitud.SolicitudesDetalle.Any(detalle => detalle.Servicio.Nombre.ToLower().Contains(valor)));
+                ordenesPorServicioResult.OnSuccess(ordenes => ListaOrdenesTrabajo = ordenes);
+                ordenesPorServicioResult.OnFailure(() =>
                     toastService.ShowError("No se pudieron consultar las órdenes de trabajo."));
             }
             else

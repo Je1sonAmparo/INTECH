@@ -3,6 +3,7 @@
 
 @inject SolicitudesService solicitudesService
 @inject ClientesService clientesService
+@inject ServiciosService serviciosService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 
@@ -17,25 +18,25 @@
             </div>
 
             <div class="card-body">
+                <div class="row g-3">
+                    @* Cliente *@
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Cliente</strong></label>
+                        <InputSelect class="form-control form-select" @bind-Value="Solicitud.ClienteId" @bind-Value:after="CargarDireccion">
+                            <option value="0" selected disabled>Elija un Cliente</option>
+                            @foreach (var cliente in ListaClientes)
+                            {
+                                <option value="@cliente.ClienteId">@cliente.Nombre</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="(() => Solicitud.ClienteId)" />
+                    </div>
 
-                @* Cliente *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Cliente</strong></label>
-                    <InputSelect class="form-control form-select" @bind-Value="Solicitud.ClienteId" @bind-Value:after="CargarDireccion">
-                        <option value="0" selected disabled>Elija un Cliente</option>
-                        @foreach (var cliente in ListaClientes)
-                        {
-                            <option value="@cliente.ClienteId">@cliente.Nombre</option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="(() => Solicitud.ClienteId)" />
-                </div>
-
-                @* Tipo de Servicio *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Tipo de Servicio</strong></label>
-                    <InputText class="form-control" @bind-Value="Solicitud.TipoServicio" placeholder="Ej.: Instalación de Paneles Solares"></InputText>
-                    <ValidationMessage For="(() => Solicitud.TipoServicio)" />
+                    @* Fecha de Solicitud *@
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Fecha de Solicitud</strong></label>
+                        <input class="form-control" value="@Solicitud.FechaSolicitud.ToString("dd/MM/yyyy")" disabled />
+                    </div>
                 </div>
 
                 @* Dirección del Servicio *@
@@ -45,13 +46,72 @@
                     <ValidationMessage For="(() => Solicitud.Direccion)" />
                 </div>
 
-                @* Fecha de Solicitud *@
+                @* Observaciones del Cliente *@
                 <div class="mb-3">
-                    <label class="form-label"><strong>Fecha de Solicitud</strong></label>
-                    <InputDate class="form-control" @bind-Value="Solicitud.FechaSolicitud"></InputDate>
-                    <ValidationMessage For="(() => Solicitud.FechaSolicitud)" />
+                    <label class="form-label"><strong>Observaciones del Cliente</strong></label>
+                    <InputTextArea class="form-control" @bind-Value="Solicitud.ObservacionesCliente" placeholder="Ej.: Desea que el trabajo se realice en horario nocturno y que se deje el área limpia."></InputTextArea>
+                    <ValidationMessage For="(() => Solicitud.ObservacionesCliente)" />
                 </div>
 
+                @* Detalles de la Solicitud *@
+                <div class="border border-success p-3 mt-3">
+                    <h5>Detalles de la Solicitud</h5>
+
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label"><strong>Servicio</strong></label>
+                            <InputSelect class="form-control form-select" @bind-Value="DetalleSeleccionado.ServicioId">
+                                <option value="0" selected disabled>Elija un servicio</option>
+                                @foreach (var servicio in ListaServicios.Where(s => s.Activo))
+                                {
+                                    <option value="@servicio.ServicioId">@servicio.Nombre</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label"><strong>Cantidad</strong></label>
+                            <InputNumber class="form-control" @bind-Value="DetalleSeleccionado.Cantidad" />
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-outline-success w-100" @onclick="AgregarDetalle">
+                                <span class="bi bi-plus-lg"></span> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <hr />
+                    <table class="table table-light">
+                        <thead class="table table-striped">
+                            <tr class="Text-center">
+                                <th>Servicio</th>
+                                <th>Cantidad</th>
+                                <th>Remover</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Solicitud.SolicitudesDetalle)
+                            {
+                                <tr>
+                                    <td>@ListaServicios.FirstOrDefault(servicio => servicio.ServicioId == detalle.ServicioId)?.Nombre</td>
+                                    <td>@detalle.Cantidad</td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-danger bi bi-trash"
+                                                @onclick="() => RemoverDetalle(detalle)"></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @* Total *@
+                <div class="row">
+                    <div class="col-6 offset-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Total de servicios</strong></label>
+                            <label class="form-control text-end"><strong>@Solicitud.SolicitudesDetalle.Sum(detalle => detalle.Cantidad).ToString("N0")</strong></label>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             @* Botones de Acción *@
@@ -65,28 +125,76 @@
 
 @code {
     public Solicitudes Solicitud { get; set; } = new Solicitudes();
+    public SolicitudesDetalle DetalleSeleccionado { get; set; } = new SolicitudesDetalle();
     public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
 
     protected override async Task OnInitializedAsync()
     {
         var clientesResult = await clientesService.GetList(c => true);
         clientesResult.OnSuccess(clientes => ListaClientes = clientes);
         clientesResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los clientes."));
+
+        var serviciosResult = await serviciosService.GetList(s => true);
+        serviciosResult.OnSuccess(servicios => ListaServicios = servicios);
+        serviciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los servicios."));
     }
 
     private void CargarDireccion()
     {
         var cliente = ListaClientes.FirstOrDefault(c => c.ClienteId == Solicitud.ClienteId);
-        if (cliente != null && Solicitud.Direccion.Trim() == "")
+        if (cliente != null)
         {
             Solicitud.Direccion = cliente.Direccion;
         }
     }
 
+    private void AgregarDetalle()
+    {
+        var servicioSeleccionado = ListaServicios.FirstOrDefault(servicio => servicio.ServicioId == DetalleSeleccionado.ServicioId);
+        if (servicioSeleccionado == null)
+        {
+            toastService.ShowError("Seleccione un servicio.");
+            return;
+        }
+
+        if (DetalleSeleccionado.Cantidad <= 0)
+        {
+            toastService.ShowError("La cantidad debe ser mayor que cero.");
+            return;
+        }
+
+        if (Solicitud.SolicitudesDetalle.Any(detalle => detalle.ServicioId == servicioSeleccionado.ServicioId))
+        {
+            toastService.ShowError("Ese servicio ya está en la solicitud.");
+            return;
+        }
+
+        Solicitud.SolicitudesDetalle.Add(new SolicitudesDetalle
+        {
+            ServicioId = servicioSeleccionado.ServicioId,
+            Cantidad = DetalleSeleccionado.Cantidad
+        });
+
+        DetalleSeleccionado = new SolicitudesDetalle();
+    }
+
+    private void RemoverDetalle(SolicitudesDetalle detalle)
+    {
+        Solicitud.SolicitudesDetalle.Remove(detalle);
+    }
+
     public async Task Guardar()
     {
-        Solicitud.TipoServicio = Solicitud.TipoServicio.Trim();
+        if (Solicitud.SolicitudesDetalle.Count == 0)
+        {
+            toastService.ShowError("Agregue al menos un servicio a la solicitud.");
+            return;
+        }
+
+        Solicitud.FechaSolicitud = DateTime.Today;
         Solicitud.Direccion = Solicitud.Direccion.Trim();
+        Solicitud.ObservacionesCliente = Solicitud.ObservacionesCliente.Trim();
 
         var creadoResult = await solicitudesService.Guardar(Solicitud);
         creadoResult.OnSuccess(() =>

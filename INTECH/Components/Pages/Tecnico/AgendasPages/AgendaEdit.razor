@@ -26,7 +26,7 @@
                         <option value="0" disabled>Seleccionar solicitud...</option>
                         @foreach (var solicitud in ListaSolicitudes)
                         {
-                            <option value="@solicitud.SolicitudId">Solicitud #@solicitud.SolicitudId - @solicitud.Cliente.Nombre (@solicitud.TipoServicio)</option>
+                            <option value="@solicitud.SolicitudId">Solicitud #@solicitud.SolicitudId - @solicitud.Cliente.Nombre (@string.Join(", ", solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre)))</option>
                         }
                     </InputSelect>
                     <ValidationMessage For="(() => Agenda.SolicitudId)" />
@@ -35,13 +35,7 @@
                 @* Técnico Asignado *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Técnico asignado</strong></label>
-                    <InputSelect class="form-control form-select" @bind-Value="Agenda.TecnicoId">
-                        <option value="">Sin asignar</option>
-                        @foreach (var tecnico in ListaTecnicos)
-                        {
-                            <option value="@tecnico.Id">@tecnico.UserName</option>
-                        }
-                    </InputSelect>
+                    <input class="form-control" value="@NombreTecnico" disabled />
                 </div>
 
                 @* Dirección *@
@@ -110,7 +104,7 @@
 
     public Agendas Agenda { get; set; } = new Agendas();
     public List<Solicitudes> ListaSolicitudes { get; set; } = new List<Solicitudes>();
-    public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
+    private string NombreTecnico { get; set; } = "Sin asignar";
     private string DireccionSeleccionada { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -122,8 +116,15 @@
         solicitudesResult.OnSuccess(solicitudes => ListaSolicitudes = solicitudes);
         solicitudesResult.OnFailure(() => toastService.ShowError("No se pudieron consultar las solicitudes."));
 
-        var tecnicos = await userManager.GetUsersInRoleAsync("Técnico");
-        ListaTecnicos = tecnicos.ToList();
+        if (!string.IsNullOrEmpty(Agenda.TecnicoId))
+        {
+            var tecnico = await userManager.FindByIdAsync(Agenda.TecnicoId);
+            if (tecnico != null)
+            {
+                var claims = await userManager.GetClaimsAsync(tecnico);
+                NombreTecnico = claims.FirstOrDefault(c => c.Type == "NombreCompleto")?.Value ?? tecnico.UserName ?? string.Empty;
+            }
+        }
 
         CargarDireccion();
     }

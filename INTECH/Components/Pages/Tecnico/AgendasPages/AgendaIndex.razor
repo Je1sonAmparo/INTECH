@@ -208,7 +208,7 @@
                         </div>
                         <div class="mb-2">
                             <small class="text-body-secondary d-block">Tipo de servicio</small>
-                            <span>@VisitaSeleccionada.Solicitud.TipoServicio</span>
+                            <span>@string.Join(", ", VisitaSeleccionada.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre))</span>
                         </div>
                         <div class="mb-2">
                             <small class="text-body-secondary d-block">Dirección</small>
