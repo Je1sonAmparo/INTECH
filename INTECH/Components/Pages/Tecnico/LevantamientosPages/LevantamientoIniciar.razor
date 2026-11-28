@@ -111,6 +111,15 @@
                             <label class="form-label"><strong>Descripción técnica</strong></label>
                             <InputTextArea class="form-control" @bind-Value="DetalleSeleccionado.DescripcionTecnica" disabled="@SoloLectura" placeholder="Ej.: Sala de 30 m², se recomiendan 24,000 BTU" />
                         </div>
+
+                        <div class="col-md-2">
+                            @if (!SoloLectura)
+                            {
+                                <button type="button" class="btn btn-outline-success w-100" @onclick="AgregarDetalle">
+                                    <span class="bi @(DetalleEditando != null ? "bi-check-lg" : "bi-plus-lg")"></span> @(DetalleEditando != null ? "Actualizar" : "Agregar")
+                                </button>
+                            }
+                        </div>
                     </div>
                 </div>
 
