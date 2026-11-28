@@ -22,7 +22,7 @@
                     @* Cliente *@
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><strong>Cliente</strong></label>
-                        <InputSelect class="form-control form-select" @bind-Value="Solicitud.ClienteId">
+                        <InputSelect class="form-control form-select" @bind-Value="Solicitud.ClienteId" @bind-Value:after="CargarDireccion">
                             <option value="0" disabled>Elija un Cliente</option>
                             @foreach (var cliente in ListaClientes)
                             {
@@ -166,6 +166,15 @@
         var serviciosResult = await serviciosService.GetList(s => true);
         serviciosResult.OnSuccess(servicios => ListaServicios = servicios);
         serviciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los servicios."));
+    }
+
+    private void CargarDireccion()
+    {
+        var cliente = ListaClientes.FirstOrDefault(c => c.ClienteId == Solicitud.ClienteId);
+        if (cliente != null)
+        {
+            Solicitud.Direccion = cliente.Direccion;
+        }
     }
 
     private void AgregarDetalle()

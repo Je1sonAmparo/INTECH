@@ -143,7 +143,7 @@
     private void CargarDireccion()
     {
         var cliente = ListaClientes.FirstOrDefault(c => c.ClienteId == Solicitud.ClienteId);
-        if (cliente != null && Solicitud.Direccion.Trim() == "")
+        if (cliente != null)
         {
             Solicitud.Direccion = cliente.Direccion;
         }
