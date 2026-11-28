@@ -26,7 +26,7 @@
                         <option value="0" selected disabled>Seleccionar solicitud...</option>
                         @foreach (var solicitud in ListaSolicitudes)
                         {
-                            <option value="@solicitud.SolicitudId">Solicitud #@solicitud.SolicitudId - @solicitud.Cliente.Nombre (@solicitud.TipoServicio)</option>
+                            <option value="@solicitud.SolicitudId">Solicitud #@solicitud.SolicitudId - @solicitud.Cliente.Nombre (@string.Join(", ", solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre)))</option>
                         }
                     </InputSelect>
                     <ValidationMessage For="(() => Agenda.SolicitudId)" />
