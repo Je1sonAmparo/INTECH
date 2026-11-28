@@ -495,6 +495,12 @@
 
                 asignaciones.Add((visita, columnaLibre));
             }
+
+            int totalColumnas = finesPorColumna.Count;
+            foreach (var asignacion in asignaciones)
+            {
+                resultado.Add((asignacion.Visita, asignacion.Columna, totalColumnas));
+            }
         }
 
         return resultado;
