@@ -21,4 +21,7 @@ public class LevantamientosDetalle
 
     [StringLength(250, ErrorMessage = "El espacio disponible no puede superar los 250 caracteres")]
     public string EspacioDisponible { get; set; } = string.Empty;
+
+    [StringLength(1000, ErrorMessage = "La descripción técnica no puede superar los 1000 caracteres")]
+    public string DescripcionTecnica { get; set; } = string.Empty;
 }
