@@ -511,7 +511,9 @@
         var inicioAgenda = new TimeOnly(HoraInicioAgenda, 0);
         var top = Math.Max(0, (posicion.Visita.HoraInicio - inicioAgenda).TotalMinutes * PixelesPorMinuto);
         var height = Math.Max(24, (posicion.Visita.HoraFin - posicion.Visita.HoraInicio).TotalMinutes * PixelesPorMinuto);
-        return $"top:{top:0.##}px;height:{height:0.##}px;";
+        var width = 100.0 / posicion.TotalColumnas;
+        var left = posicion.Columna * width;
+        return $"top:{top:0.##}px;height:{height:0.##}px;left:{left:0.##}%;width:calc({width:0.##}% - 4px);";
     }
 
     private string ObtenerColorEstado(int estadoSolicitudId)
