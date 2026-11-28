@@ -118,5 +118,76 @@ public partial class _20261128184456_AgregarDetalleLevantamientos : Migration
     /// <inheritdoc />
     protected override void Down(MigrationBuilder migrationBuilder)
     {
+        migrationBuilder.DropForeignKey(
+            name: "FK_FotosLevantamientos_LevantamientosDetalle_DetalleId",
+            table: "FotosLevantamientos");
+
+        migrationBuilder.DropTable(
+            name: "LevantamientosDetalle");
+
+        migrationBuilder.DropColumn(
+            name: "BreakerPrincipal",
+            table: "Levantamientos");
+
+        migrationBuilder.DropColumn(
+            name: "ConsumoMensual",
+            table: "Levantamientos");
+
+        migrationBuilder.DropColumn(
+            name: "TensionMedida",
+            table: "Levantamientos");
+
+        migrationBuilder.RenameColumn(
+            name: "DetalleId",
+            table: "FotosLevantamientos",
+            newName: "LevantamientoId");
+
+        migrationBuilder.RenameIndex(
+            name: "IX_FotosLevantamientos_DetalleId",
+            table: "FotosLevantamientos",
+            newName: "IX_FotosLevantamientos_LevantamientoId");
+
+        migrationBuilder.AddColumn<string>(
+            name: "CargasElectricas",
+            table: "Levantamientos",
+            type: "nvarchar(max)",
+            nullable: false,
+            defaultValue: "");
+
+        migrationBuilder.AddColumn<string>(
+            name: "DisponibilidadEspaciosFisicos",
+            table: "Levantamientos",
+            type: "nvarchar(max)",
+            nullable: false,
+            defaultValue: "");
+
+        migrationBuilder.AddColumn<string>(
+            name: "EstabilidadTension",
+            table: "Levantamientos",
+            type: "nvarchar(max)",
+            nullable: false,
+            defaultValue: "");
+
+        migrationBuilder.AddColumn<string>(
+            name: "RecorridoCableado",
+            table: "Levantamientos",
+            type: "nvarchar(max)",
+            nullable: false,
+            defaultValue: "");
+
+        migrationBuilder.AddColumn<string>(
+            name: "RecorridoTuberias",
+            table: "Levantamientos",
+            type: "nvarchar(max)",
+            nullable: false,
+            defaultValue: "");
+
+        migrationBuilder.AddForeignKey(
+            name: "FK_FotosLevantamientos_Levantamientos_LevantamientoId",
+            table: "FotosLevantamientos",
+            column: "LevantamientoId",
+            principalTable: "Levantamientos",
+            principalColumn: "LevantamientoId",
+            onDelete: ReferentialAction.Cascade);
     }
 }
