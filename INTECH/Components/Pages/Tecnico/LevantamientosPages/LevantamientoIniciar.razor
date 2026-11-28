@@ -100,6 +100,12 @@
                             <label class="form-label"><strong>Espacio disponible</strong></label>
                             <InputText class="form-control" @bind-Value="DetalleSeleccionado.EspacioDisponible" disabled="@SoloLectura" placeholder="Ej.: Pared exterior de 2 m × 1 m" />
                         </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Fotografías</strong></label>
+                            <InputFile class="form-control" OnChange="CargarFotos" multiple accept="image/*" disabled="@SoloLectura" />
+                            <small class="text-body-secondary">Fotos en este servicio: @DetalleSeleccionado.FotosLevantamientos.Count (máximo 5 MB cada una).</small>
+                        </div>
                     </div>
                 </div>
 
