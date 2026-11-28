@@ -1,0 +1,199 @@
+@page "/Servicio/Index"
+@attribute [Authorize(Roles = "Gerente")]
+
+@inject ServiciosService serviciosService
+@inject CategoriasServiciosService categoriasServiciosService
+@inject ToastService toastService
+
+<PageTitle>Registro de Servicios</PageTitle>
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-center mb-4">
+            <h5 class="card-title">Registro de Servicios</h5>
+            <a href="/Servicio/Create" class="btn btn-primary"> <span class="bi bi-plus-square mt-3"></span> Crear Servicio</a>
+        </div>
+
+        <div class="card-body">
+            @* Filtro *@
+            <div class="row">
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Filtrar por</strong></label>
+                </div>
+                <div class="col-4">
+                    <label class="col-form-label"><strong>Búsqueda</strong></label>
+                </div>
+            </div>
+
+            @* Controles de búsqueda *@
+            <div class="row align-items-center">
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        <option value="ServicioId">ServicioId</option>
+                        <option value="Nombre">Nombre</option>
+                        <option value="Categoria">Categoría</option>
+                    </InputSelect>
+                </div>
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Categoría</strong></label>
+                    <InputSelect class="form-select" @bind-Value="CategoriaFiltroId">
+                        <option value="0">Todas las categorías</option>
+                        @foreach (var categoriaServicio in ListaCategoriasServicios)
+                        {
+                            <option value="@categoriaServicio.CategoriaServicioId">@categoriaServicio.Nombre</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+
+            @* Tabla *@
+            <div class="grid">
+                <QuickGrid Items="ListaServicios.AsQueryable()" Class="table table-hover mt-3">
+                    <PropertyColumn Property="@(s => s.ServicioId)" Title="ServicioId" Sortable="true" />
+                    <PropertyColumn Property="@(s => s.Nombre)" Title="Nombre" Sortable="true" />
+                    <PropertyColumn Property="@(s => s.CategoriaServicio.Nombre)" Title="Categoría" Sortable="true" />
+                    <TemplateColumn Title="Estado">
+                        @if (context.Activo)
+                        {
+                            <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
+                        }
+                    </TemplateColumn>
+                    <TemplateColumn Title="Opciones" Align="Align.Center">
+                        <div class="d-flex text-nowrap">
+                            <a href="/Servicio/Edit/@context.ServicioId" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                            <button type="button" class="btn btn-outline-danger bi bi-trash ms-2"
+                                    data-bs-toggle="modal" data-bs-target="#modalEliminarServicio"
+                                    @onclick="() => servicioIdAEliminar = context.ServicioId"></button>
+                        </div>
+                    </TemplateColumn>
+                </QuickGrid>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between align-center mb-4">
+            <label>Cantidad:  @ListaServicios.Count</label>
+        </div>
+    </div>
+</div>
+
+@* Modal de eliminación *@
+<div class="modal fade" id="modalEliminarServicio" tabindex="-1" aria-labelledby="modalEliminarServicioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalEliminarServicioLabel">Eliminar Servicio</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas eliminar este servicio?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="Eliminar">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    public List<Servicios> ListaServicios { get; set; } = new List<Servicios>();
+    public List<CategoriasServicios> ListaCategoriasServicios { get; set; } = new List<CategoriasServicios>();
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+    public int CategoriaFiltroId { get; set; }
+    private int servicioIdAEliminar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var categoriasServiciosResult = await categoriasServiciosService.GetList(c => true);
+        categoriasServiciosResult.OnSuccess(categoriasServicios => ListaCategoriasServicios = categoriasServicios);
+        categoriasServiciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar las categorías."));
+
+        await CargarServicios();
+    }
+
+    private async Task CargarServicios()
+    {
+        var serviciosResult = await serviciosService.GetList(s => true);
+        serviciosResult.OnSuccess(servicios => ListaServicios = servicios);
+        serviciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar los servicios."));
+    }
+
+    private async Task Eliminar()
+    {
+        var result = await serviciosService.Eliminar(servicioIdAEliminar);
+        result.OnSuccess(() => toastService.ShowSuccess("Servicio eliminado correctamente."));
+        result.OnFailure(() => toastService.ShowError("No se pudo eliminar el servicio."));
+
+        if (result.IsSuccess)
+        {
+            await CargarServicios();
+        }
+    }
+
+    private async Task Buscar()
+    {
+        var valor = ValorFiltro.Trim().ToLower();
+        if (Filtro == "Categoria")
+        {
+            if (CategoriaFiltroId != 0)
+            {
+                var serviciosPorCategoriaResult = await serviciosService.GetList(s => s.CategoriaServicioId == CategoriaFiltroId);
+                serviciosPorCategoriaResult.OnSuccess(servicios => ListaServicios = servicios);
+                serviciosPorCategoriaResult.OnFailure(() =>
+                    toastService.ShowError("No se pudieron consultar los servicios."));
+            }
+            else if (valor == "")
+            {
+                await CargarServicios();
+            }
+            else
+            {
+                var serviciosPorNombreCategoriaResult = await serviciosService.GetList(s => s.CategoriaServicio.Nombre.ToLower().Contains(valor));
+                serviciosPorNombreCategoriaResult.OnSuccess(servicios => ListaServicios = servicios);
+                serviciosPorNombreCategoriaResult.OnFailure(() =>
+                    toastService.ShowError("No se pudieron consultar los servicios."));
+            }
+        }
+        else if (valor == "")
+        {
+            await CargarServicios();
+        }
+        else if (Filtro == "ServicioId")
+        {
+            if (!int.TryParse(valor, out var servicioId))
+            {
+                toastService.ShowError("Ingrese un número de servicio válido.");
+                return;
+            }
+
+            var serviciosPorIdResult = await serviciosService.GetList(s => s.ServicioId == servicioId);
+            serviciosPorIdResult.OnSuccess(servicios => ListaServicios = servicios);
+            serviciosPorIdResult.OnFailure(() =>
+                toastService.ShowError("No se pudieron consultar los servicios."));
+        }
+        else if (Filtro == "Nombre")
+        {
+            var serviciosPorNombreResult = await serviciosService.GetList(s => s.Nombre.ToLower().Contains(valor));
+            serviciosPorNombreResult.OnSuccess(servicios => ListaServicios = servicios);
+            serviciosPorNombreResult.OnFailure(() =>
+                toastService.ShowError("No se pudieron consultar los servicios."));
+        }
+        else
+        {
+            toastService.ShowError("Seleccione un filtro.");
+        }
+    }
+}
