@@ -356,6 +356,7 @@
     public LevantamientosDetalle DetalleSeleccionado { get; set; } = new LevantamientosDetalle();
     private LevantamientosDetalle? DetalleEditando { get; set; }
     public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
+    private Dictionary<string, string> NombresTecnicos { get; set; } = new Dictionary<string, string>();
     private bool SoloLectura => Levantamiento.Solicitud != null && Levantamiento.Solicitud.EstadoSolicitudId != 1 && Levantamiento.Solicitud.EstadoSolicitudId != 2;
 
     protected override async Task OnInitializedAsync()
