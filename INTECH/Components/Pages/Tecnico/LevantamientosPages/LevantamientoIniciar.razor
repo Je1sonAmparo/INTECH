@@ -19,10 +19,12 @@
 
             <div class="card-body">
 
-                @* Cliente *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Cliente</strong></label>
-                    <input class="form-control" value="@Levantamiento.Solicitud?.Cliente?.Nombre" disabled />
+                <div class="row g-3">
+                    @* Cliente *@
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Cliente</strong></label>
+                        <input class="form-control" value="@Levantamiento.Solicitud?.Cliente?.Nombre" disabled />
+                    </div>
                 </div>
 
                 @* Servicios *@
