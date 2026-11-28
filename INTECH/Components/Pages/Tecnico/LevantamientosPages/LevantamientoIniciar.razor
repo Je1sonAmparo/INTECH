@@ -397,6 +397,15 @@
         return ListaTecnicos.FirstOrDefault(t => t.Id == tecnicoId)?.UserName ?? "Sin asignar";
     }
 
+    private string ObtenerNombreServicio(int servicioId)
+    {
+        return Levantamiento.Solicitud?.SolicitudesDetalle
+            .FirstOrDefault(d => d.ServicioId == servicioId)?.Servicio.Nombre
+            ?? Levantamiento.LevantamientosDetalle
+                .FirstOrDefault(d => d.ServicioId == servicioId)?.Servicio?.Nombre
+            ?? string.Empty;
+    }
+
     private async Task CargarFotos(InputFileChangeEventArgs e)
     {
         var tamanoMaximo = 5 * 1024 * 1024;
