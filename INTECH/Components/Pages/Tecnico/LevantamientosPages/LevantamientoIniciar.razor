@@ -520,6 +520,21 @@
         };
     }
 
+    private void RemoverDetalle(LevantamientosDetalle detalle)
+    {
+        if (SoloLectura)
+        {
+            return;
+        }
+
+        Levantamiento.LevantamientosDetalle.Remove(detalle);
+        if (DetalleEditando == detalle)
+        {
+            DetalleEditando = null;
+            DetalleSeleccionado = new LevantamientosDetalle();
+        }
+    }
+
     private async Task CargarFotos(InputFileChangeEventArgs e)
     {
         var tamanoMaximo = 5 * 1024 * 1024;
