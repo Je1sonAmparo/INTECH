@@ -26,4 +26,12 @@ public class LevantamientosDetalle
     public string DescripcionTecnica { get; set; } = string.Empty;
 
     public bool Viable { get; set; } = true;
+
+    [ForeignKey("LevantamientoId")]
+    [InverseProperty("LevantamientosDetalle")]
+    public virtual Levantamientos Levantamiento { get; set; } = null!;
+
+    [ForeignKey("ServicioId")]
+    [InverseProperty("LevantamientosDetalle")]
+    public virtual Servicios Servicio { get; set; } = null!;
 }
