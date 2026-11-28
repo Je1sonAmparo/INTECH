@@ -7,4 +7,6 @@ public class LevantamientosDetalle
 {
     [Key]
     public int DetalleId { get; set; }
+
+    public int LevantamientoId { get; set; }
 }
