@@ -59,12 +59,6 @@
 
 
 
-                @* Estabilidad de la tensión *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Estabilidad de la tensión *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.EstabilidadTension" disabled="@SoloLectura" placeholder="Ej.: Tensión medida dentro del rango operativo durante la inspección"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.EstabilidadTension)" />
-                </div>
 
                 @* Recorrido físico de las tuberías *@
                 <div class="mb-3">
