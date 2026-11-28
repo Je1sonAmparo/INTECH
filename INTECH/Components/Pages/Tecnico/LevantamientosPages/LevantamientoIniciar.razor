@@ -561,9 +561,8 @@
             using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
 
-            Levantamiento.FotosLevantamientos.Add(new FotosLevantamientos
+            DetalleSeleccionado.FotosLevantamientos.Add(new FotosLevantamientos
             {
-                LevantamientoId = Levantamiento.LevantamientoId,
                 NombreArchivo = archivo.Name,
                 TipoContenido = archivo.ContentType,
                 Contenido = memoryStream.ToArray()
