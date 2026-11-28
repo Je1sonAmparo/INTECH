@@ -48,6 +48,13 @@
                         <InputNumber class="form-control" @bind-Value="Levantamiento.BreakerPrincipal" disabled="@SoloLectura" placeholder="Ej.: 100" />
                         <ValidationMessage For="(() => Levantamiento.BreakerPrincipal)" />
                     </div>
+
+                    @* Consumo mensual *@
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label"><strong>Consumo mensual (kWh) *</strong></label>
+                        <InputNumber class="form-control" @bind-Value="Levantamiento.ConsumoMensual" disabled="@SoloLectura" placeholder="Ej.: 650" />
+                        <ValidationMessage For="(() => Levantamiento.ConsumoMensual)" />
+                    </div>
                 </div>
 
                 @* Disponibilidad de los espacios físicos *@
