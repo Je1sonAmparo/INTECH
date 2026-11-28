@@ -99,6 +99,17 @@
                                 }
                             </div>
                         </div>
+
+                        <div class="d-flex border-start border-end border-bottom rounded-bottom bg-white">
+                            @* Columna de horas *@
+                            <div class="fc-col-hora border-end bg-light">
+                                @for (int hora = 8; hora < 18; hora++)
+                                {
+                                    var horaActual = hora;
+                                    <div class="fc-hora-fila small text-muted text-center pt-1">@($"{horaActual:00}:00")</div>
+                                }
+                            </div>
+                        </div>
                     }
                     else if (VistaActual == VistaAgenda.Semanal)
                     {
@@ -114,6 +125,17 @@
                                         <div class="small text-uppercase text-muted">@dia.ToString("ddd", Cultura)</div>
                                         <div class="fs-6">@dia.Day</div>
                                     </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-flex border-start border-end border-bottom rounded-bottom bg-white">
+                            @* Columna de horas *@
+                            <div class="fc-col-hora border-end bg-light">
+                                @for (int hora = 8; hora < 18; hora++)
+                                {
+                                    var horaActual = hora;
+                                    <div class="fc-hora-fila small text-muted text-center pt-1">@($"{horaActual:00}:00")</div>
                                 }
                             </div>
                         </div>
