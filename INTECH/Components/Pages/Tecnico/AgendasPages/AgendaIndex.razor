@@ -99,45 +99,6 @@
                                 }
                             </div>
                         </div>
-
-                        <div class="d-flex border-start border-end border-bottom rounded-bottom bg-white">
-                            @* Columna de horas *@
-                            <div class="fc-col-hora border-end bg-light">
-                                @for (int hora = 8; hora < 18; hora++)
-                                {
-                                    var horaActual = hora;
-                                    <div class="fc-hora-fila small text-muted text-center pt-1">@($"{horaActual:00}:00")</div>
-                                }
-                            </div>
-
-                            @* Columnas de la semana *@
-                            <div class="fc-grid-7 flex-grow-1">
-                                @foreach (var dia in diasSemana)
-                                {
-                                    var visitasDia = ListaAgendas
-                                        .Where(a => a.Fecha.Date == dia.Date)
-                                        .ToList();
-
-                                    <div class="fc-timeline border-end">
-                                        @for (int hora = 8; hora < 18; hora++)
-                                        {
-                                            <div class="fc-hora-fila"></div>
-                                        }
-
-                                        @foreach (var posicion in ObtenerPosiciones(visitasDia))
-                                        {
-                                            <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-1 overflow-hidden"
-                                                 style="@ObtenerEstiloVisita(posicion)"
-                                                 @onclick="() => SeleccionarVisita(posicion.Visita)">
-                                                <div class="small fw-bold text-truncate">@posicion.Visita.HoraInicio.ToString("hh:mm tt")</div>
-                                                <div class="small text-truncate">@posicion.Visita.Solicitud.Cliente.Nombre</div>
-                                                <div class="small text-body-secondary text-truncate">@ObtenerNombreTecnico(posicion.Visita.TecnicoId)</div>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
                     }
                     else if (VistaActual == VistaAgenda.Semanal)
                     {
@@ -513,7 +474,10 @@
         var height = Math.Max(24, (posicion.Visita.HoraFin - posicion.Visita.HoraInicio).TotalMinutes * PixelesPorMinuto);
         var width = 100.0 / posicion.TotalColumnas;
         var left = posicion.Columna * width;
-        return $"top:{top:0.##}px;height:{height:0.##}px;left:{left:0.##}%;width:calc({width:0.##}% - 4px);";
+
+        return string.Create(
+            System.Globalization.CultureInfo.InvariantCulture,
+            $"top:{top:0.##}px;height:{height:0.##}px;left:{left:0.##}%;width:calc({width:0.##}% - 4px);");
     }
 
     private string ObtenerColorEstado(int estadoSolicitudId)
