@@ -442,6 +442,27 @@
             .ThenBy(a => a.HoraFin)
             .ToList();
 
+        var grupos = new List<List<Agendas>>();
+        var grupoActual = new List<Agendas>();
+        var finMaximoGrupo = TimeOnly.MinValue;
+
+        foreach (var visita in ordenadas)
+        {
+            if (grupoActual.Count == 0 || visita.HoraInicio < finMaximoGrupo)
+            {
+                grupoActual.Add(visita);
+                if (visita.HoraFin > finMaximoGrupo)
+                {
+                    finMaximoGrupo = visita.HoraFin;
+                }
+            }
+        }
+
+        if (grupoActual.Count > 0)
+        {
+            grupos.Add(grupoActual);
+        }
+
         return resultado;
     }
 
