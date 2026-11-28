@@ -469,6 +469,12 @@
             grupos.Add(grupoActual);
         }
 
+        foreach (var grupo in grupos)
+        {
+            var finesPorColumna = new List<TimeOnly>();
+            var asignaciones = new List<(Agendas Visita, int Columna)>();
+        }
+
         return resultado;
     }
 
