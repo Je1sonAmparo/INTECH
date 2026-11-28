@@ -34,6 +34,15 @@
                 </div>
 
 
+                <div class="row g-3">
+                    @* Tensión medida *@
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label"><strong>Tensión medida (V) *</strong></label>
+                        <InputNumber class="form-control" @bind-Value="Levantamiento.TensionMedida" disabled="@SoloLectura" placeholder="Ej.: 120" />
+                        <ValidationMessage For="(() => Levantamiento.TensionMedida)" />
+                    </div>
+                </div>
+
                 @* Disponibilidad de los espacios físicos *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Disponibilidad de los espacios físicos *</strong></label>
