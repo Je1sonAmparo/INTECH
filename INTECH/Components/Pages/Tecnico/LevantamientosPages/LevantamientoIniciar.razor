@@ -389,6 +389,11 @@
             return "Sin asignar";
         }
 
+        if (NombresTecnicos.TryGetValue(tecnicoId, out var nombreCompleto))
+        {
+            return nombreCompleto;
+        }
+
         return ListaTecnicos.FirstOrDefault(t => t.Id == tecnicoId)?.UserName ?? "Sin asignar";
     }
 
