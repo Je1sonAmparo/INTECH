@@ -123,6 +123,9 @@ public class AgendasService(
                 .ThenInclude(s => s.Cliente)
             .Include(a => a.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(a => a.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .FirstOrDefaultAsync(a => a.AgendaId == agendaId && !a.IsDeleted);
     }
 
@@ -134,6 +137,9 @@ public class AgendasService(
                 .ThenInclude(s => s.Cliente)
             .Include(a => a.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(a => a.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .Where(a => !a.IsDeleted)
             .Where(criterio)
             .AsNoTracking()

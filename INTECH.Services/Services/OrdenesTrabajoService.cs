@@ -66,6 +66,9 @@ public class OrdenesTrabajoService(
                 .ThenInclude(s => s.Cliente)
             .Include(o => o.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(o => o.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .FirstOrDefaultAsync(o => o.OrdenTrabajoId == ordenTrabajoId && !o.IsDeleted);
     }
 
@@ -77,6 +80,9 @@ public class OrdenesTrabajoService(
                 .ThenInclude(s => s.Cliente)
             .Include(o => o.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(o => o.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .Where(o => !o.IsDeleted)
             .Where(criterio)
             .AsNoTracking()

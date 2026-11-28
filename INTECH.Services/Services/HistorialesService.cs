@@ -77,6 +77,9 @@ public class HistorialesService(
                 .ThenInclude(s => s.Cliente)
             .Include(h => h.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(h => h.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .Include(h => h.HistorialesDetalle)
             .FirstOrDefaultAsync(h => h.HistorialId == historialId && !h.IsDeleted);
     }
@@ -89,6 +92,9 @@ public class HistorialesService(
                 .ThenInclude(s => s.Cliente)
             .Include(h => h.Solicitud)
                 .ThenInclude(s => s.EstadoSolicitud)
+            .Include(h => h.Solicitud)
+                .ThenInclude(s => s.SolicitudesDetalle)
+                    .ThenInclude(detalle => detalle.Servicio)
             .Include(h => h.HistorialesDetalle)
             .Where(h => !h.IsDeleted)
             .Where(criterio)
