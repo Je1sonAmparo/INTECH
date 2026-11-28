@@ -81,6 +81,14 @@
                                 {
                                     <div class="fc-hora-fila"></div>
                                 }
+
+                                @foreach (var posicion in ObtenerPosiciones(visitasDelDia))
+                                {
+                                    <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-2 overflow-hidden"
+                                         style="@ObtenerEstiloVisita(posicion)"
+                                         @onclick="() => SeleccionarVisita(posicion.Visita)">
+                                    </div>
+                                }
                             </div>
                         </div>
                     }
