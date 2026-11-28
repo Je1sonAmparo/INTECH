@@ -456,6 +456,12 @@
                     finMaximoGrupo = visita.HoraFin;
                 }
             }
+            else
+            {
+                grupos.Add(grupoActual);
+                grupoActual = new List<Agendas> { visita };
+                finMaximoGrupo = visita.HoraFin;
+            }
         }
 
         if (grupoActual.Count > 0)
