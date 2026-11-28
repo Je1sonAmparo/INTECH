@@ -19,7 +19,7 @@ public class FotosLevantamientos
     [Required(ErrorMessage = "Este Campo Es Requerido")]
     public byte[] Contenido { get; set; } = Array.Empty<byte>();
 
-    [ForeignKey("LevantamientoId")]
+    [ForeignKey("DetalleId")]
     [InverseProperty("FotosLevantamientos")]
     public virtual Levantamientos Levantamiento { get; set; } = null!;
 }
