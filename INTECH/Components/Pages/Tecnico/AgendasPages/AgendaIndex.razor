@@ -59,35 +59,11 @@
                     @* Calendario *@
                     @if (VistaActual == VistaAgenda.Hoy)
                     {
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0 align-middle">
-                                <tbody>
-                                    @for (int hora = 8; hora <= 18; hora++)
-                                    {
-                                        var horaActual = hora;
-                                        var visitasHora = ListaAgendas
-                                            .Where(a => a.Fecha.Date == FechaReferencia.Date && a.HoraInicio.Hour == horaActual)
-                                            .OrderBy(a => a.HoraInicio)
-                                            .ToList();
+                        var visitasDelDia = ListaAgendas
+                            .Where(a => a.Fecha.Date == FechaReferencia.Date)
+                            .ToList();
 
-                                        <tr>
-                                            <td class="text-body-secondary small fc-col-hora">@($"{(horaActual > 12 ? horaActual - 12 : horaActual):00} {(horaActual >= 12 ? "PM" : "AM")}")</td>
-                                            <td class="fc-slot-cell">
-                                                <div class="d-flex flex-column gap-1">
-                                                    @foreach (var visita in visitasHora)
-                                                    {
-                                                        <div class="badge bg-primary text-start fw-normal py-2 px-2 fc-event-item"
-                                                             @onclick="() => SeleccionarVisita(visita)">
-                                                            <span class="fw-bold">@visita.HoraInicio.ToString("hh:mm tt") - @visita.HoraFin.ToString("hh:mm tt")</span>
-                                                            | Solicitud #@visita.SolicitudId - @visita.Solicitud.Cliente.Nombre (@visita.Solicitud.Direccion)
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="d-flex border rounded bg-white">
                         </div>
                     }
                     else if (VistaActual == VistaAgenda.Semanal)
