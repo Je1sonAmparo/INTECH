@@ -435,6 +435,12 @@
             toastService.ShowError("Ingrese el espacio disponible.");
             return;
         }
+
+        if (DetalleSeleccionado.DistanciaRecorrido < 0)
+        {
+            toastService.ShowError("La distancia no puede ser negativa.");
+            return;
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
