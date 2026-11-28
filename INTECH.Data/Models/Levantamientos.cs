@@ -24,8 +24,6 @@ public class Levantamientos
     [Required(ErrorMessage = "Este Campo Es Requerido")]
     public TimeOnly HoraFin { get; set; } = new TimeOnly(9, 30);
 
-    public string DisponibilidadEspaciosFisicos { get; set; } = string.Empty;
-
     public string CargasElectricas { get; set; } = string.Empty;
 
     public string EstabilidadTension { get; set; } = string.Empty;
