@@ -18,7 +18,6 @@
             </div>
 
             <div class="card-body">
-
                 <div class="row g-3">
                     @* Cliente *@
                     <div class="col-md-6 mb-3">
@@ -31,72 +30,7 @@
                         <label class="form-label"><strong>Técnico asignado</strong></label>
                         <input class="form-control" value="@ObtenerNombreTecnico(Levantamiento.TecnicoId)" disabled />
                     </div>
-
-                    @if (DetalleSeleccionado.FotosLevantamientos.Any())
-                    {
-                        <div class="row g-3 mt-2">
-                            @foreach (var foto in DetalleSeleccionado.FotosLevantamientos)
-                            {
-                                <div class="col-6 col-md-3">
-                                    <div class="card h-100">
-                                        <img src="@($"data:{foto.TipoContenido};base64,{Convert.ToBase64String(foto.Contenido)}")" class="card-img-top" alt="@foto.NombreArchivo" />
-                                        <div class="card-body p-2">
-                                            <small class="text-body-secondary d-block text-truncate">@foto.NombreArchivo</small>
-                                        </div>
-                                        @if (!SoloLectura)
-                                        {
-                                            <div class="card-footer text-center p-2">
-                                                <button type="button" class="btn btn-outline-danger btn-sm bi bi-trash" @onclick="() => RemoverFoto(foto)"></button>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-
-                    <hr />
-                    <table class="table table-light">
-                        <thead class="table table-striped">
-                            <tr class="Text-center">
-                                <th>Servicio</th>
-                                <th>Ubicación</th>
-                                <th>Distancia (m)</th>
-                                <th>Viable</th>
-                                <th>Fotos</th>
-                                <th>Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var detalle in Levantamiento.LevantamientosDetalle)
-                            {
-                                <tr>
-                                    <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
-                                    <td>@detalle.Ubicacion</td>
-                                    <td>@detalle.DistanciaRecorrido</td>
-                                    <td>
-                                        <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
-                                            @(detalle.Viable ? "Sí" : "No")
-                                        </span>
-                                    </td>
-                                    <td>@detalle.FotosLevantamientos.Count</td>
-                                    <td>
-                                        @if (!SoloLectura)
-                                        {
-                                            <div class="d-flex text-nowrap">
-                                                <button type="button" class="btn btn-outline-primary bi bi-pencil-square"
-                                                        @onclick="() => EditarDetalle(detalle)"></button>
-                                                <button type="button" class="btn btn-outline-danger bi bi-trash ms-2"
-                                                        @onclick="() => RemoverDetalle(detalle)"></button>
-                                            </div>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
                 </div>
-
 
                 <div class="row g-3">
                     @* Tensión medida *@
@@ -119,76 +53,7 @@
                         <InputNumber class="form-control" @bind-Value="Levantamiento.ConsumoMensual" disabled="@SoloLectura" placeholder="Ej.: 650" />
                         <ValidationMessage For="(() => Levantamiento.ConsumoMensual)" />
                     </div>
-
-                    @if (DetalleSeleccionado.FotosLevantamientos.Any())
-                    {
-                        <div class="row g-3 mt-2">
-                            @foreach (var foto in DetalleSeleccionado.FotosLevantamientos)
-                            {
-                                <div class="col-6 col-md-3">
-                                    <div class="card h-100">
-                                        <img src="@($"data:{foto.TipoContenido};base64,{Convert.ToBase64String(foto.Contenido)}")" class="card-img-top" alt="@foto.NombreArchivo" />
-                                        <div class="card-body p-2">
-                                            <small class="text-body-secondary d-block text-truncate">@foto.NombreArchivo</small>
-                                        </div>
-                                        @if (!SoloLectura)
-                                        {
-                                            <div class="card-footer text-center p-2">
-                                                <button type="button" class="btn btn-outline-danger btn-sm bi bi-trash" @onclick="() => RemoverFoto(foto)"></button>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-
-                    <hr />
-                    <table class="table table-light">
-                        <thead class="table table-striped">
-                            <tr class="Text-center">
-                                <th>Servicio</th>
-                                <th>Ubicación</th>
-                                <th>Distancia (m)</th>
-                                <th>Viable</th>
-                                <th>Fotos</th>
-                                <th>Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var detalle in Levantamiento.LevantamientosDetalle)
-                            {
-                                <tr>
-                                    <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
-                                    <td>@detalle.Ubicacion</td>
-                                    <td>@detalle.DistanciaRecorrido</td>
-                                    <td>
-                                        <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
-                                            @(detalle.Viable ? "Sí" : "No")
-                                        </span>
-                                    </td>
-                                    <td>@detalle.FotosLevantamientos.Count</td>
-                                    <td>
-                                        @if (!SoloLectura)
-                                        {
-                                            <div class="d-flex text-nowrap">
-                                                <button type="button" class="btn btn-outline-primary bi bi-pencil-square"
-                                                        @onclick="() => EditarDetalle(detalle)"></button>
-                                                <button type="button" class="btn btn-outline-danger bi bi-trash ms-2"
-                                                        @onclick="() => RemoverDetalle(detalle)"></button>
-                                            </div>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
                 </div>
-
-
-
-
-
 
                 @* Detalles del Levantamiento *@
                 <div class="border border-success p-3 mt-3">
@@ -328,11 +193,8 @@
                 @* Observaciones *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Observaciones</strong></label>
-                    <InputTextArea class="form-control" @bind-Value="Levantamiento.Observaciones" disabled="@SoloLectura" placeholder="Ej.: Se recomienda coordinar el acceso y validar los materiales antes de iniciar."></InputTextArea>
+                    <InputTextArea class="form-control" @bind-Value="Levantamiento.Observaciones" disabled="@SoloLectura" placeholder="Ej.: Se recomienda coordinar el acceso y validar los materiales antes de iniciar." />
                 </div>
-
-
-
             </div>
 
             @* Botones de Acción *@
@@ -649,6 +511,12 @@
         if (Levantamiento.TensionMedida <= 0 || Levantamiento.BreakerPrincipal <= 0 || Levantamiento.ConsumoMensual <= 0)
         {
             toastService.ShowError("La tensión medida, el breaker principal y el consumo mensual deben ser mayores que cero.");
+            return;
+        }
+
+        if (Levantamiento.Solicitud == null || Levantamiento.LevantamientosDetalle.Count < Levantamiento.Solicitud.SolicitudesDetalle.Count)
+        {
+            toastService.ShowError("Evalúe todos los servicios de la solicitud antes de enviarla a administración.");
             return;
         }
 
