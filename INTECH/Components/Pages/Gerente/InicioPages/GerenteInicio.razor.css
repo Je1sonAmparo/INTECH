@@ -1,0 +1,9 @@
+.btn-outline-dark {
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #463bc4;
+    --bs-btn-hover-border-color: #463bc4;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #362d9a;
+    --bs-btn-active-border-color: #362d9a;
+    --bs-btn-focus-shadow-rgb: 70, 59, 196;
+}

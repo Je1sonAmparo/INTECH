@@ -1,6 +1,6 @@
 <nav class="tecnico-nav nav flex-column" aria-label="Menú del técnico">
     <div class="nav-item px-3 pt-3 pb-2">
-        <NavLink class="nav-link d-flex align-items-center" href="/" Match="NavLinkMatch.All">
+        <NavLink class="nav-link d-flex align-items-center" href="/Tecnico/Inicio" Match="NavLinkMatch.All">
             <span class="bi bi-house-door text-primary" aria-hidden="true"></span> Inicio
         </NavLink>
     </div>
@@ -46,7 +46,7 @@
                     <span class="bi bi-person text-primary fs-4 lh-1 d-flex"></span>
                 </span>
                 <div class="d-flex flex-column">
-                    <span class="fw-bold">@context.User.Identity?.Name</span>
+                    <span class="fw-bold">@(context.User.FindFirst("NombreCompleto")?.Value ?? context.User.Identity?.Name)</span>
                     <small class="text-body-secondary">Técnico</small>
                 </div>
             </div>

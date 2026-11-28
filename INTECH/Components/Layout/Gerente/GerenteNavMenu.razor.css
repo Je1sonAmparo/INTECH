@@ -1,0 +1,9 @@
+.tecnico-nav .bi::before {
+    -webkit-text-stroke: 0.35px currentColor;
+}
+
+.tecnico-nav ::deep .nav-link.active {
+    color: #463bc4;
+    background-color: #eeecfa;
+    box-shadow: inset 3px 0 0 #463bc4, inset 0 0 0 1px rgba(70, 59, 196, 0.25), 0 2px 6px rgba(70, 59, 196, 0.12);
+}
