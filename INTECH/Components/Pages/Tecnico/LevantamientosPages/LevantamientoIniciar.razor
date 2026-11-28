@@ -646,13 +646,9 @@
 
         LimpiarCampos();
 
-        if (Levantamiento.DisponibilidadEspaciosFisicos == "" ||
-            Levantamiento.CargasElectricas == "" ||
-            Levantamiento.EstabilidadTension == "" ||
-            Levantamiento.RecorridoTuberias == "" ||
-            Levantamiento.RecorridoCableado == "")
+        if (Levantamiento.TensionMedida <= 0 || Levantamiento.BreakerPrincipal <= 0 || Levantamiento.ConsumoMensual <= 0)
         {
-            toastService.ShowError("Complete todos los campos obligatorios del levantamiento.");
+            toastService.ShowError("La tensión medida, el breaker principal y el consumo mensual deben ser mayores que cero.");
             return;
         }
 
