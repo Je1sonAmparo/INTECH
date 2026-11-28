@@ -354,6 +354,7 @@
 
     public Levantamientos Levantamiento { get; set; } = new Levantamientos();
     public LevantamientosDetalle DetalleSeleccionado { get; set; } = new LevantamientosDetalle();
+    private LevantamientosDetalle? DetalleEditando { get; set; }
     public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
     private bool SoloLectura => Levantamiento.Solicitud != null && Levantamiento.Solicitud.EstadoSolicitudId != 1 && Levantamiento.Solicitud.EstadoSolicitudId != 2;
 
