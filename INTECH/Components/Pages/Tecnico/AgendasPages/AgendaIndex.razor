@@ -434,6 +434,17 @@
         return ListaTecnicos.FirstOrDefault(t => t.Id == tecnicoId)?.UserName ?? "Sin asignar";
     }
 
+    private List<(Agendas Visita, int Columna, int TotalColumnas)> ObtenerPosiciones(List<Agendas> visitasDelDia)
+    {
+        var resultado = new List<(Agendas Visita, int Columna, int TotalColumnas)>();
+        var ordenadas = visitasDelDia
+            .OrderBy(a => a.HoraInicio)
+            .ThenBy(a => a.HoraFin)
+            .ToList();
+
+        return resultado;
+    }
+
     private string ObtenerColorEstado(int estadoSolicitudId)
     {
         if (estadoSolicitudId == 1)
