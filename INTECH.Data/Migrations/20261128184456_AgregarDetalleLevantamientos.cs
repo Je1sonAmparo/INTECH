@@ -33,6 +33,37 @@ public partial class _20261128184456_AgregarDetalleLevantamientos : Migration
         migrationBuilder.DropColumn(
             name: "RecorridoTuberias",
             table: "Levantamientos");
+
+        migrationBuilder.RenameColumn(
+            name: "LevantamientoId",
+            table: "FotosLevantamientos",
+            newName: "DetalleId");
+
+        migrationBuilder.RenameIndex(
+            name: "IX_FotosLevantamientos_LevantamientoId",
+            table: "FotosLevantamientos",
+            newName: "IX_FotosLevantamientos_DetalleId");
+
+        migrationBuilder.AddColumn<int>(
+            name: "BreakerPrincipal",
+            table: "Levantamientos",
+            type: "int",
+            nullable: false,
+            defaultValue: 0);
+
+        migrationBuilder.AddColumn<int>(
+            name: "ConsumoMensual",
+            table: "Levantamientos",
+            type: "int",
+            nullable: false,
+            defaultValue: 0);
+
+        migrationBuilder.AddColumn<int>(
+            name: "TensionMedida",
+            table: "Levantamientos",
+            type: "int",
+            nullable: false,
+            defaultValue: 0);
     }
 
     /// <inheritdoc />
