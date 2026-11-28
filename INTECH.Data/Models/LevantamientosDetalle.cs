@@ -34,4 +34,7 @@ public class LevantamientosDetalle
     [ForeignKey("ServicioId")]
     [InverseProperty("LevantamientosDetalle")]
     public virtual Servicios Servicio { get; set; } = null!;
+
+    [InverseProperty("Detalle")]
+    public virtual ICollection<FotosLevantamientos> FotosLevantamientos { get; set; } = new List<FotosLevantamientos>();
 }
