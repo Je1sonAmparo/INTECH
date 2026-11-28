@@ -74,6 +74,14 @@
                                     </div>
                                 }
                             </div>
+
+                            @* Columna del día *@
+                            <div class="fc-timeline flex-grow-1">
+                                @for (int hora = 8; hora < 18; hora++)
+                                {
+                                    <div class="fc-hora-fila"></div>
+                                }
+                            </div>
                         </div>
                     }
                     else if (VistaActual == VistaAgenda.Semanal)
