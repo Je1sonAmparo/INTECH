@@ -58,12 +58,6 @@
                 </div>
 
 
-                @* Cargas eléctricas *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Cargas eléctricas *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.CargasElectricas" disabled="@SoloLectura" placeholder="Ej.: Carga revisada para el servicio solicitado"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.CargasElectricas)" />
-                </div>
 
                 @* Estabilidad de la tensión *@
                 <div class="mb-3">
