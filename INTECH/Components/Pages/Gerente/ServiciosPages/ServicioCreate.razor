@@ -1,0 +1,87 @@
+@page "/Servicio/Create"
+@attribute [Authorize(Roles = "Gerente")]
+
+@inject ServiciosService serviciosService
+@inject CategoriasServiciosService categoriasServiciosService
+@inject NavigationManager navigationManager
+@inject ToastService toastService
+
+<PageTitle>Crear Servicio</PageTitle>
+<EditForm Model="Servicio" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h5 class="card-title">Crear Servicio</h5>
+            </div>
+
+            <div class="card-body">
+
+                @* Categoría *@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Categoría</strong></label>
+                    <InputSelect class="form-control form-select" @bind-Value="Servicio.CategoriaServicioId">
+                        <option value="0" selected disabled>Elija una Categoría</option>
+                        @foreach (var categoriaServicio in ListaCategoriasServicios)
+                        {
+                            <option value="@categoriaServicio.CategoriaServicioId">@categoriaServicio.Nombre</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="(() => Servicio.CategoriaServicioId)" />
+                </div>
+
+                @* Nombre *@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Nombre</strong></label>
+                    <InputText class="form-control" @bind-Value="Servicio.Nombre" placeholder="Ej.: Instalación de Paneles Solares"></InputText>
+                    <ValidationMessage For="(() => Servicio.Nombre)" />
+                </div>
+
+                @* Activo *@
+                <div class="mb-3 form-check">
+                    <InputCheckbox class="form-check-input" @bind-Value="Servicio.Activo"></InputCheckbox>
+                    <label class="form-check-label"><strong>Activo</strong></label>
+                </div>
+
+            </div>
+
+            @* Botones de Acción *@
+            <div class="card-footer text-center mt-2">
+                <a href="/Servicio/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"></span> Volver</a>
+                <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Servicios Servicio { get; set; } = new Servicios();
+    public List<CategoriasServicios> ListaCategoriasServicios { get; set; } = new List<CategoriasServicios>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var categoriasServiciosResult = await categoriasServiciosService.GetList(c => true);
+        categoriasServiciosResult.OnSuccess(categoriasServicios => ListaCategoriasServicios = categoriasServicios);
+        categoriasServiciosResult.OnFailure(() => toastService.ShowError("No se pudieron consultar las categorías."));
+    }
+
+    public async Task Guardar()
+    {
+        Servicio.Nombre = Servicio.Nombre.Trim();
+
+        if (await serviciosService.ExisteNombre(Servicio.Nombre, Servicio.ServicioId))
+        {
+            toastService.ShowError("Ya existe un servicio con ese nombre.");
+            return;
+        }
+
+        var creadoResult = await serviciosService.Guardar(Servicio);
+        creadoResult.OnSuccess(() =>
+        {
+            toastService.ShowSuccess("Servicio guardado correctamente.");
+            navigationManager.NavigateTo("/Servicio/Index");
+        });
+        creadoResult.OnFailure(() => toastService.ShowError("No se pudo guardar el servicio."));
+    }
+}
