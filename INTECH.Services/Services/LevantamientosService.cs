@@ -101,7 +101,6 @@ public class LevantamientosService(
         levantamientoExistente.FechaProgramada = levantamiento.FechaProgramada;
         levantamientoExistente.HoraInicio = levantamiento.HoraInicio;
         levantamientoExistente.HoraFin = levantamiento.HoraFin;
-        levantamientoExistente.CargasElectricas = levantamiento.CargasElectricas;
         levantamientoExistente.EstabilidadTension = levantamiento.EstabilidadTension;
         levantamientoExistente.RecorridoTuberias = levantamiento.RecorridoTuberias;
         levantamientoExistente.RecorridoCableado = levantamiento.RecorridoCableado;
