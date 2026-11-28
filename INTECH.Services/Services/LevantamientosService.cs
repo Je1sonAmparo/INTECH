@@ -101,6 +101,7 @@ public class LevantamientosService(
         levantamientoExistente.FechaProgramada = levantamiento.FechaProgramada;
         levantamientoExistente.HoraInicio = levantamiento.HoraInicio;
         levantamientoExistente.HoraFin = levantamiento.HoraFin;
+        levantamientoExistente.TensionMedida = levantamiento.TensionMedida;
         levantamientoExistente.Observaciones = levantamiento.Observaciones;
         levantamientoExistente.EsBorrador = levantamiento.EsBorrador;
 
