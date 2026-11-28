@@ -406,6 +406,19 @@
             ?? string.Empty;
     }
 
+    private void AgregarDetalle()
+    {
+        if (SoloLectura)
+        {
+            toastService.ShowError("No se puede modificar un levantamiento cuya solicitud no está pendiente o en proceso.");
+            return;
+        }
+
+        DetalleSeleccionado.Ubicacion = DetalleSeleccionado.Ubicacion.Trim();
+        DetalleSeleccionado.EspacioDisponible = DetalleSeleccionado.EspacioDisponible.Trim();
+        DetalleSeleccionado.DescripcionTecnica = DetalleSeleccionado.DescripcionTecnica.Trim();
+    }
+
     private async Task CargarFotos(InputFileChangeEventArgs e)
     {
         var tamanoMaximo = 5 * 1024 * 1024;
