@@ -113,6 +113,32 @@ public class LevantamientosService(
         }
         contexto.RemoveRange(levantamientoExistente.LevantamientosDetalle);
 
+        foreach (var detalle in levantamiento.LevantamientosDetalle)
+        {
+            var nuevoDetalle = new LevantamientosDetalle
+            {
+                LevantamientoId = levantamientoExistente.LevantamientoId,
+                ServicioId = detalle.ServicioId,
+                Ubicacion = detalle.Ubicacion,
+                DistanciaRecorrido = detalle.DistanciaRecorrido,
+                EspacioDisponible = detalle.EspacioDisponible,
+                DescripcionTecnica = detalle.DescripcionTecnica,
+                Viable = detalle.Viable
+            };
+
+            foreach (var foto in detalle.FotosLevantamientos)
+            {
+                nuevoDetalle.FotosLevantamientos.Add(new FotosLevantamientos
+                {
+                    NombreArchivo = foto.NombreArchivo,
+                    TipoContenido = foto.TipoContenido,
+                    Contenido = foto.Contenido
+                });
+            }
+
+            levantamientoExistente.LevantamientosDetalle.Add(nuevoDetalle);
+        }
+
         return await contexto.SaveChangesAsync() > 0;
     }
 
