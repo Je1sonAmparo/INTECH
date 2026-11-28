@@ -27,6 +27,9 @@ public class Levantamientos
     [Range(0, int.MaxValue, ErrorMessage = "La tensión medida no puede ser negativa")]
     public int TensionMedida { get; set; }
 
+    [Range(0, int.MaxValue, ErrorMessage = "El breaker principal no puede ser negativo")]
+    public int BreakerPrincipal { get; set; }
+
     public string Observaciones { get; set; } = string.Empty;
 
     public bool EsBorrador { get; set; }
