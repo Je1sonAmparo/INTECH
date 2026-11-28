@@ -429,6 +429,12 @@
             toastService.ShowError("Ingrese la ubicación del equipo.");
             return;
         }
+
+        if (string.IsNullOrWhiteSpace(DetalleSeleccionado.EspacioDisponible))
+        {
+            toastService.ShowError("Ingrese el espacio disponible.");
+            return;
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
