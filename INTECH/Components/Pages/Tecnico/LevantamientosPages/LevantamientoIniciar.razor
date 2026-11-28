@@ -41,6 +41,13 @@
                         <InputNumber class="form-control" @bind-Value="Levantamiento.TensionMedida" disabled="@SoloLectura" placeholder="Ej.: 120" />
                         <ValidationMessage For="(() => Levantamiento.TensionMedida)" />
                     </div>
+
+                    @* Breaker principal *@
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label"><strong>Breaker principal (A) *</strong></label>
+                        <InputNumber class="form-control" @bind-Value="Levantamiento.BreakerPrincipal" disabled="@SoloLectura" placeholder="Ej.: 100" />
+                        <ValidationMessage For="(() => Levantamiento.BreakerPrincipal)" />
+                    </div>
                 </div>
 
                 @* Disponibilidad de los espacios físicos *@
