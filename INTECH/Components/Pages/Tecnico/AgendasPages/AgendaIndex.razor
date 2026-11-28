@@ -84,12 +84,16 @@
 
                                 @foreach (var posicion in ObtenerPosiciones(visitasDelDia))
                                 {
+                                    var servicios = string.Join(", ", posicion.Visita.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre));
                                     <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-2 overflow-hidden"
                                          style="@ObtenerEstiloVisita(posicion)"
                                          @onclick="() => SeleccionarVisita(posicion.Visita)">
                                         <div class="d-flex justify-content-between align-items-center gap-2">
                                             <span class="fw-bold text-truncate">@posicion.Visita.Solicitud.Cliente.Nombre</span>
                                             <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis text-truncate">@ObtenerNombreTecnico(posicion.Visita.TecnicoId)</span>
+                                        </div>
+                                        <div class="small text-body-secondary text-truncate">
+                                            @posicion.Visita.HoraInicio.ToString("hh:mm tt") - @posicion.Visita.HoraFin.ToString("hh:mm tt") • @servicios
                                         </div>
                                     </div>
                                 }
