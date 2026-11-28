@@ -315,6 +315,16 @@
                     </table>
                 </div>
 
+                @* Servicios evaluados *@
+                <div class="row mt-3">
+                    <div class="col-6 offset-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Servicios evaluados</strong></label>
+                            <label class="form-control text-end"><strong>@Levantamiento.LevantamientosDetalle.Count de @(Levantamiento.Solicitud?.SolicitudesDetalle.Count ?? 0)</strong></label>
+                        </div>
+                    </div>
+                </div>
+
                 @* Observaciones *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Observaciones</strong></label>
