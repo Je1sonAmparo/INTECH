@@ -417,6 +417,12 @@
         DetalleSeleccionado.Ubicacion = DetalleSeleccionado.Ubicacion.Trim();
         DetalleSeleccionado.EspacioDisponible = DetalleSeleccionado.EspacioDisponible.Trim();
         DetalleSeleccionado.DescripcionTecnica = DetalleSeleccionado.DescripcionTecnica.Trim();
+
+        if (DetalleSeleccionado.ServicioId == 0)
+        {
+            toastService.ShowError("Seleccione un servicio.");
+            return;
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
