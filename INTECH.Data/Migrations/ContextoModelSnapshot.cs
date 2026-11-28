@@ -16,7 +16,7 @@ partial class ContextoModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261126221401_AgregarHistorialYDetalle";
+    public override string LastMigrationId => "20261128155056_QuitarCategoriasSinUso";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -58,6 +58,36 @@ partial class ContextoModelSnapshot : ModelSnapshot
                 b.HasIndex("SolicitudId");
 
                 b.ToTable("Agendas");
+            });
+
+        modelBuilder.Entity("INTECH.Models.CategoriasServicios", b =>
+            {
+                var categoriaServicioId = b.Property<int>("CategoriaServicioId")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(categoriaServicioId);
+
+                b.Property<string>("Nombre")
+                    .IsRequired()
+                    .HasMaxLength(80)
+                    .HasColumnType("nvarchar(80)");
+
+                b.HasKey("CategoriaServicioId");
+
+                b.ToTable("CategoriasServicios");
+
+                b.HasData(
+                    new
+                    {
+                        CategoriaServicioId = 6,
+                        Nombre = "Instalaciones"
+                    },
+                    new
+                    {
+                        CategoriaServicioId = 7,
+                        Nombre = "Mantenimiento"
+                    });
             });
 
         modelBuilder.Entity("INTECH.Models.Clientes", b =>
@@ -345,6 +375,69 @@ partial class ContextoModelSnapshot : ModelSnapshot
                 b.ToTable("OrdenesTrabajo");
             });
 
+        modelBuilder.Entity("INTECH.Models.Servicios", b =>
+            {
+                var servicioId = b.Property<int>("ServicioId")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(servicioId);
+
+                b.Property<bool>("Activo")
+                    .HasColumnType("bit");
+
+                b.Property<int>("CategoriaServicioId")
+                    .HasColumnType("int");
+
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("bit");
+
+                b.Property<string>("Nombre")
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasColumnType("nvarchar(150)");
+
+                b.HasKey("ServicioId");
+
+                b.HasIndex("CategoriaServicioId");
+
+                b.ToTable("Servicios");
+
+                b.HasData(
+                    new
+                    {
+                        ServicioId = 1,
+                        Activo = true,
+                        CategoriaServicioId = 6,
+                        IsDeleted = false,
+                        Nombre = "Instalación de Paneles Solares"
+                    },
+                    new
+                    {
+                        ServicioId = 2,
+                        Activo = true,
+                        CategoriaServicioId = 6,
+                        IsDeleted = false,
+                        Nombre = "Instalación de Sistema UPS"
+                    },
+                    new
+                    {
+                        ServicioId = 3,
+                        Activo = true,
+                        CategoriaServicioId = 7,
+                        IsDeleted = false,
+                        Nombre = "Mantenimiento Eléctrico"
+                    },
+                    new
+                    {
+                        ServicioId = 4,
+                        Activo = true,
+                        CategoriaServicioId = 6,
+                        IsDeleted = false,
+                        Nombre = "Instalación de Planta Eléctrica"
+                    });
+            });
+
         modelBuilder.Entity("INTECH.Models.Solicitudes", b =>
             {
                 var solicitudId = b.Property<int>("SolicitudId")
@@ -382,6 +475,32 @@ partial class ContextoModelSnapshot : ModelSnapshot
                 b.HasIndex("EstadoSolicitudId");
 
                 b.ToTable("Solicitudes");
+            });
+
+        modelBuilder.Entity("INTECH.Models.SolicitudesDetalle", b =>
+            {
+                var detalleId = b.Property<int>("DetalleId")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(detalleId);
+
+                b.Property<int>("Cantidad")
+                    .HasColumnType("int");
+
+                b.Property<int>("ServicioId")
+                    .HasColumnType("int");
+
+                b.Property<int>("SolicitudId")
+                    .HasColumnType("int");
+
+                b.HasKey("DetalleId");
+
+                b.HasIndex("ServicioId");
+
+                b.HasIndex("SolicitudId");
+
+                b.ToTable("SolicitudesDetalle");
             });
 
         modelBuilder.Entity("INTECH.Models.TelefonosClientes", b =>
@@ -479,6 +598,17 @@ partial class ContextoModelSnapshot : ModelSnapshot
                 b.Navigation("Solicitud");
             });
 
+        modelBuilder.Entity("INTECH.Models.Servicios", b =>
+            {
+                b.HasOne("INTECH.Models.CategoriasServicios", "CategoriaServicio")
+                    .WithMany("Servicios")
+                    .HasForeignKey("CategoriaServicioId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("CategoriaServicio");
+            });
+
         modelBuilder.Entity("INTECH.Models.Solicitudes", b =>
             {
                 b.HasOne("INTECH.Models.Clientes", "Cliente")
@@ -498,6 +628,25 @@ partial class ContextoModelSnapshot : ModelSnapshot
                 b.Navigation("EstadoSolicitud");
             });
 
+        modelBuilder.Entity("INTECH.Models.SolicitudesDetalle", b =>
+            {
+                b.HasOne("INTECH.Models.Servicios", "Servicio")
+                    .WithMany("SolicitudesDetalle")
+                    .HasForeignKey("ServicioId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("INTECH.Models.Solicitudes", "Solicitud")
+                    .WithMany("SolicitudesDetalle")
+                    .HasForeignKey("SolicitudId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Servicio");
+
+                b.Navigation("Solicitud");
+            });
+
         modelBuilder.Entity("INTECH.Models.TelefonosClientes", b =>
             {
                 b.HasOne("INTECH.Models.Clientes", "Cliente")
@@ -507,6 +656,11 @@ partial class ContextoModelSnapshot : ModelSnapshot
                     .IsRequired();
 
                 b.Navigation("Cliente");
+            });
+
+        modelBuilder.Entity("INTECH.Models.CategoriasServicios", b =>
+            {
+                b.Navigation("Servicios");
             });
 
         modelBuilder.Entity("INTECH.Models.Clientes", b =>
@@ -531,6 +685,11 @@ partial class ContextoModelSnapshot : ModelSnapshot
                 b.Navigation("FotosLevantamientos");
             });
 
+        modelBuilder.Entity("INTECH.Models.Servicios", b =>
+            {
+                b.Navigation("SolicitudesDetalle");
+            });
+
         modelBuilder.Entity("INTECH.Models.Solicitudes", b =>
             {
                 b.Navigation("Agendas");
@@ -540,6 +699,8 @@ partial class ContextoModelSnapshot : ModelSnapshot
                 b.Navigation("Levantamientos");
 
                 b.Navigation("OrdenesTrabajo");
+
+                b.Navigation("SolicitudesDetalle");
             });
 #pragma warning restore 612, 618
     }
