@@ -582,12 +582,13 @@
 
     private void LimpiarCampos()
     {
-        Levantamiento.DisponibilidadEspaciosFisicos = Levantamiento.DisponibilidadEspaciosFisicos.Trim();
-        Levantamiento.CargasElectricas = Levantamiento.CargasElectricas.Trim();
-        Levantamiento.EstabilidadTension = Levantamiento.EstabilidadTension.Trim();
-        Levantamiento.RecorridoTuberias = Levantamiento.RecorridoTuberias.Trim();
-        Levantamiento.RecorridoCableado = Levantamiento.RecorridoCableado.Trim();
         Levantamiento.Observaciones = Levantamiento.Observaciones.Trim();
+        foreach (var detalle in Levantamiento.LevantamientosDetalle)
+        {
+            detalle.Ubicacion = detalle.Ubicacion.Trim();
+            detalle.EspacioDisponible = detalle.EspacioDisponible.Trim();
+            detalle.DescripcionTecnica = detalle.DescripcionTecnica.Trim();
+        }
     }
 
     private async Task ActualizarEstadoSolicitud(int estadoSolicitudId)
