@@ -24,15 +24,14 @@ public class Levantamientos
     [Required(ErrorMessage = "Este Campo Es Requerido")]
     public TimeOnly HoraFin { get; set; } = new TimeOnly(9, 30);
 
-    public string DisponibilidadEspaciosFisicos { get; set; } = string.Empty;
+    [Range(0, int.MaxValue, ErrorMessage = "La tensión medida no puede ser negativa")]
+    public int TensionMedida { get; set; }
 
-    public string CargasElectricas { get; set; } = string.Empty;
+    [Range(0, int.MaxValue, ErrorMessage = "El breaker principal no puede ser negativo")]
+    public int BreakerPrincipal { get; set; }
 
-    public string EstabilidadTension { get; set; } = string.Empty;
-
-    public string RecorridoTuberias { get; set; } = string.Empty;
-
-    public string RecorridoCableado { get; set; } = string.Empty;
+    [Range(0, int.MaxValue, ErrorMessage = "El consumo mensual no puede ser negativo")]
+    public int ConsumoMensual { get; set; }
 
     public string Observaciones { get; set; } = string.Empty;
 
@@ -43,5 +42,5 @@ public class Levantamientos
     public virtual Solicitudes Solicitud { get; set; } = null!;
 
     [InverseProperty("Levantamiento")]
-    public virtual ICollection<FotosLevantamientos> FotosLevantamientos { get; set; } = new List<FotosLevantamientos>();
+    public virtual ICollection<LevantamientosDetalle> LevantamientosDetalle { get; set; } = new List<LevantamientosDetalle>();
 }

@@ -25,4 +25,7 @@ public class Servicios
 
     [InverseProperty("Servicio")]
     public virtual ICollection<SolicitudesDetalle> SolicitudesDetalle { get; set; } = new List<SolicitudesDetalle>();
+
+    [InverseProperty("Servicio")]
+    public virtual ICollection<LevantamientosDetalle> LevantamientosDetalle { get; set; } = new List<LevantamientosDetalle>();
 }

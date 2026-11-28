@@ -16,7 +16,7 @@ partial class ContextoModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261128161359_AgregarObservacionesCliente";
+    public override string LastMigrationId => "20261128184456_AgregarDetalleLevantamientos";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -208,7 +208,7 @@ partial class ContextoModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("varbinary(max)");
 
-                b.Property<int>("LevantamientoId")
+                b.Property<int>("DetalleId")
                     .HasColumnType("int");
 
                 b.Property<string>("NombreArchivo")
@@ -221,7 +221,7 @@ partial class ContextoModelSnapshot : ModelSnapshot
 
                 b.HasKey("FotoLevantamientoId");
 
-                b.HasIndex("LevantamientoId");
+                b.HasIndex("DetalleId");
 
                 b.ToTable("FotosLevantamientos");
             });
@@ -290,20 +290,14 @@ partial class ContextoModelSnapshot : ModelSnapshot
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(levantamientoId);
 
-                b.Property<string>("CargasElectricas")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                b.Property<int>("BreakerPrincipal")
+                    .HasColumnType("int");
 
-                b.Property<string>("DisponibilidadEspaciosFisicos")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                b.Property<int>("ConsumoMensual")
+                    .HasColumnType("int");
 
                 b.Property<bool>("EsBorrador")
                     .HasColumnType("bit");
-
-                b.Property<string>("EstabilidadTension")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
 
                 b.Property<DateTime>("FechaProgramada")
                     .HasColumnType("datetime2");
@@ -321,25 +315,64 @@ partial class ContextoModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("RecorridoCableado")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("RecorridoTuberias")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
                 b.Property<int>("SolicitudId")
                     .HasColumnType("int");
 
                 b.Property<string>("TecnicoId")
                     .HasColumnType("nvarchar(max)");
 
+                b.Property<int>("TensionMedida")
+                    .HasColumnType("int");
+
                 b.HasKey("LevantamientoId");
 
                 b.HasIndex("SolicitudId");
 
                 b.ToTable("Levantamientos");
+            });
+
+        modelBuilder.Entity("INTECH.Models.LevantamientosDetalle", b =>
+            {
+                var detalleId = b.Property<int>("DetalleId")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(detalleId);
+
+                b.Property<string>("DescripcionTecnica")
+                    .IsRequired()
+                    .HasMaxLength(1000)
+                    .HasColumnType("nvarchar(1000)");
+
+                b.Property<double>("DistanciaRecorrido")
+                    .HasColumnType("float");
+
+                b.Property<string>("EspacioDisponible")
+                    .IsRequired()
+                    .HasMaxLength(250)
+                    .HasColumnType("nvarchar(250)");
+
+                b.Property<int>("LevantamientoId")
+                    .HasColumnType("int");
+
+                b.Property<int>("ServicioId")
+                    .HasColumnType("int");
+
+                b.Property<string>("Ubicacion")
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasColumnType("nvarchar(150)");
+
+                b.Property<bool>("Viable")
+                    .HasColumnType("bit");
+
+                b.HasKey("DetalleId");
+
+                b.HasIndex("LevantamientoId");
+
+                b.HasIndex("ServicioId");
+
+                b.ToTable("LevantamientosDetalle");
             });
 
         modelBuilder.Entity("INTECH.Models.OrdenesTrabajo", b =>
@@ -545,13 +578,13 @@ partial class ContextoModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("INTECH.Models.FotosLevantamientos", b =>
             {
-                b.HasOne("INTECH.Models.Levantamientos", "Levantamiento")
+                b.HasOne("INTECH.Models.LevantamientosDetalle", "Detalle")
                     .WithMany("FotosLevantamientos")
-                    .HasForeignKey("LevantamientoId")
+                    .HasForeignKey("DetalleId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.Navigation("Levantamiento");
+                b.Navigation("Detalle");
             });
 
         modelBuilder.Entity("INTECH.Models.Historiales", b =>
@@ -585,6 +618,25 @@ partial class ContextoModelSnapshot : ModelSnapshot
                     .IsRequired();
 
                 b.Navigation("Solicitud");
+            });
+
+        modelBuilder.Entity("INTECH.Models.LevantamientosDetalle", b =>
+            {
+                b.HasOne("INTECH.Models.Levantamientos", "Levantamiento")
+                    .WithMany("LevantamientosDetalle")
+                    .HasForeignKey("LevantamientoId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("INTECH.Models.Servicios", "Servicio")
+                    .WithMany("LevantamientosDetalle")
+                    .HasForeignKey("ServicioId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Levantamiento");
+
+                b.Navigation("Servicio");
             });
 
         modelBuilder.Entity("INTECH.Models.OrdenesTrabajo", b =>
@@ -682,11 +734,18 @@ partial class ContextoModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("INTECH.Models.Levantamientos", b =>
             {
+                b.Navigation("LevantamientosDetalle");
+            });
+
+        modelBuilder.Entity("INTECH.Models.LevantamientosDetalle", b =>
+            {
                 b.Navigation("FotosLevantamientos");
             });
 
         modelBuilder.Entity("INTECH.Models.Servicios", b =>
             {
+                b.Navigation("LevantamientosDetalle");
+
                 b.Navigation("SolicitudesDetalle");
             });
 

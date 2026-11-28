@@ -83,7 +83,8 @@ public class LevantamientosService(
     {
         await using var contexto = await contextFactory.CreateDbContextAsync();
         var levantamientoExistente = await contexto.Levantamientos
-            .Include(l => l.FotosLevantamientos)
+            .Include(l => l.LevantamientosDetalle)
+                .ThenInclude(d => d.FotosLevantamientos)
             .SingleOrDefaultAsync(l => l.LevantamientoId == levantamiento.LevantamientoId && !l.IsDeleted);
         if (levantamientoExistente == null)
         {
@@ -100,24 +101,42 @@ public class LevantamientosService(
         levantamientoExistente.FechaProgramada = levantamiento.FechaProgramada;
         levantamientoExistente.HoraInicio = levantamiento.HoraInicio;
         levantamientoExistente.HoraFin = levantamiento.HoraFin;
-        levantamientoExistente.DisponibilidadEspaciosFisicos = levantamiento.DisponibilidadEspaciosFisicos;
-        levantamientoExistente.CargasElectricas = levantamiento.CargasElectricas;
-        levantamientoExistente.EstabilidadTension = levantamiento.EstabilidadTension;
-        levantamientoExistente.RecorridoTuberias = levantamiento.RecorridoTuberias;
-        levantamientoExistente.RecorridoCableado = levantamiento.RecorridoCableado;
+        levantamientoExistente.TensionMedida = levantamiento.TensionMedida;
+        levantamientoExistente.BreakerPrincipal = levantamiento.BreakerPrincipal;
+        levantamientoExistente.ConsumoMensual = levantamiento.ConsumoMensual;
         levantamientoExistente.Observaciones = levantamiento.Observaciones;
         levantamientoExistente.EsBorrador = levantamiento.EsBorrador;
 
-        contexto.RemoveRange(levantamientoExistente.FotosLevantamientos);
-        foreach (var foto in levantamiento.FotosLevantamientos)
+        foreach (var detalleExistente in levantamientoExistente.LevantamientosDetalle)
         {
-            levantamientoExistente.FotosLevantamientos.Add(new FotosLevantamientos
+            contexto.RemoveRange(detalleExistente.FotosLevantamientos);
+        }
+        contexto.RemoveRange(levantamientoExistente.LevantamientosDetalle);
+
+        foreach (var detalle in levantamiento.LevantamientosDetalle)
+        {
+            var nuevoDetalle = new LevantamientosDetalle
             {
                 LevantamientoId = levantamientoExistente.LevantamientoId,
-                NombreArchivo = foto.NombreArchivo,
-                TipoContenido = foto.TipoContenido,
-                Contenido = foto.Contenido
-            });
+                ServicioId = detalle.ServicioId,
+                Ubicacion = detalle.Ubicacion,
+                DistanciaRecorrido = detalle.DistanciaRecorrido,
+                EspacioDisponible = detalle.EspacioDisponible,
+                DescripcionTecnica = detalle.DescripcionTecnica,
+                Viable = detalle.Viable
+            };
+
+            foreach (var foto in detalle.FotosLevantamientos)
+            {
+                nuevoDetalle.FotosLevantamientos.Add(new FotosLevantamientos
+                {
+                    NombreArchivo = foto.NombreArchivo,
+                    TipoContenido = foto.TipoContenido,
+                    Contenido = foto.Contenido
+                });
+            }
+
+            levantamientoExistente.LevantamientosDetalle.Add(nuevoDetalle);
         }
 
         return await contexto.SaveChangesAsync() > 0;
@@ -134,7 +153,10 @@ public class LevantamientosService(
             .Include(l => l.Solicitud)
                 .ThenInclude(s => s.SolicitudesDetalle)
                     .ThenInclude(detalle => detalle.Servicio)
-            .Include(l => l.FotosLevantamientos)
+            .Include(l => l.LevantamientosDetalle)
+                .ThenInclude(detalle => detalle.Servicio)
+            .Include(l => l.LevantamientosDetalle)
+                .ThenInclude(detalle => detalle.FotosLevantamientos)
             .FirstOrDefaultAsync(l => l.LevantamientoId == levantamientoId && !l.IsDeleted);
     }
 
@@ -149,7 +171,7 @@ public class LevantamientosService(
             .Include(l => l.Solicitud)
                 .ThenInclude(s => s.SolicitudesDetalle)
                     .ThenInclude(detalle => detalle.Servicio)
-            .Include(l => l.FotosLevantamientos)
+            .Include(l => l.LevantamientosDetalle)
             .Where(l => !l.IsDeleted)
             .Where(criterio)
             .AsNoTracking()

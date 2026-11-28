@@ -18,76 +18,107 @@
             </div>
 
             <div class="card-body">
+                <div class="row g-3">
+                    @* Cliente *@
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Cliente</strong></label>
+                        <input class="form-control" value="@Levantamiento.Solicitud?.Cliente?.Nombre" disabled />
+                    </div>
 
-                @* Cliente *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Cliente</strong></label>
-                    <input class="form-control" value="@Levantamiento.Solicitud?.Cliente?.Nombre" disabled />
+                    @* Técnico Asignado *@
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><strong>Técnico asignado</strong></label>
+                        <input class="form-control" value="@ObtenerNombreTecnico(Levantamiento.TecnicoId)" disabled />
+                    </div>
                 </div>
 
-                @* Servicios *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Servicios</strong></label>
-                    <input class="form-control" value="@(Levantamiento.Solicitud == null ? "" : string.Join(", ", Levantamiento.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre)))" disabled />
+                <div class="row g-3">
+                    @* Tensión medida *@
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label"><strong>Tensión medida (V) *</strong></label>
+                        <InputNumber class="form-control" @bind-Value="Levantamiento.TensionMedida" disabled="@SoloLectura" placeholder="Ej.: 120" />
+                        <ValidationMessage For="(() => Levantamiento.TensionMedida)" />
+                    </div>
+
+                    @* Breaker principal *@
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label"><strong>Breaker principal (A) *</strong></label>
+                        <InputNumber class="form-control" @bind-Value="Levantamiento.BreakerPrincipal" disabled="@SoloLectura" placeholder="Ej.: 100" />
+                        <ValidationMessage For="(() => Levantamiento.BreakerPrincipal)" />
+                    </div>
+
+                    @* Consumo mensual *@
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label"><strong>Consumo mensual (kWh) *</strong></label>
+                        <InputNumber class="form-control" @bind-Value="Levantamiento.ConsumoMensual" disabled="@SoloLectura" placeholder="Ej.: 650" />
+                        <ValidationMessage For="(() => Levantamiento.ConsumoMensual)" />
+                    </div>
                 </div>
 
-                @* Técnico Asignado *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Técnico asignado</strong></label>
-                    <input class="form-control" value="@ObtenerNombreTecnico(Levantamiento.TecnicoId)" disabled />
-                </div>
+                @* Detalles del Levantamiento *@
+                <div class="border border-success p-3 mt-3">
+                    <h5>Detalles del Levantamiento</h5>
 
-                @* Disponibilidad de los espacios físicos *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Disponibilidad de los espacios físicos *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.DisponibilidadEspaciosFisicos" disabled="@SoloLectura" placeholder="Ej.: Área de trabajo disponible en horario coordinado con el cliente"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.DisponibilidadEspaciosFisicos)" />
-                </div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Servicio</strong></label>
+                            <InputSelect class="form-control form-select" @bind-Value="DetalleSeleccionado.ServicioId" disabled="@(SoloLectura || DetalleEditando != null)">
+                                <option value="0" selected disabled>Elija un servicio</option>
+                                @foreach (var detalle in ServiciosDisponibles)
+                                {
+                                    <option value="@detalle.ServicioId">@detalle.Servicio.Nombre (× @detalle.Cantidad)</option>
+                                }
+                            </InputSelect>
+                        </div>
 
-                @* Cargas eléctricas *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Cargas eléctricas *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.CargasElectricas" disabled="@SoloLectura" placeholder="Ej.: Carga revisada para el servicio solicitado"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.CargasElectricas)" />
-                </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Ubicación del equipo</strong></label>
+                            <InputText class="form-control" @bind-Value="DetalleSeleccionado.Ubicacion" disabled="@SoloLectura" placeholder="Ej.: Techo, lado sur" />
+                        </div>
 
-                @* Estabilidad de la tensión *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Estabilidad de la tensión *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.EstabilidadTension" disabled="@SoloLectura" placeholder="Ej.: Tensión medida dentro del rango operativo durante la inspección"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.EstabilidadTension)" />
-                </div>
+                        <div class="col-md-2">
+                            <label class="form-label"><strong>Distancia (m)</strong></label>
+                            <InputNumber class="form-control" @bind-Value="DetalleSeleccionado.DistanciaRecorrido" disabled="@SoloLectura" placeholder="Ej.: 15" />
+                        </div>
 
-                @* Recorrido físico de las tuberías *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Recorrido físico de las tuberías *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.RecorridoTuberias" disabled="@SoloLectura" placeholder="Ej.: Recorrido principal verificado; requiere fijación y revisión"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.RecorridoTuberias)" />
-                </div>
+                        <div class="col-md-2">
+                            <label class="form-label"><strong>Viable</strong></label>
+                            <InputSelect class="form-control form-select" @bind-Value="DetalleSeleccionado.Viable" disabled="@SoloLectura">
+                                <option value="true">Sí</option>
+                                <option value="false">No</option>
+                            </InputSelect>
+                        </div>
 
-                @* Recorrido físico del cableado *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Recorrido físico del cableado *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.RecorridoCableado" disabled="@SoloLectura" placeholder="Ej.: Tendido y puntos de conexión identificados en el área"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.RecorridoCableado)" />
-                </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Espacio disponible</strong></label>
+                            <InputText class="form-control" @bind-Value="DetalleSeleccionado.EspacioDisponible" disabled="@SoloLectura" placeholder="Ej.: Pared exterior de 2 m × 1 m" />
+                        </div>
 
-                @* Observaciones *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Observaciones</strong></label>
-                    <InputTextArea class="form-control" @bind-Value="Levantamiento.Observaciones" disabled="@SoloLectura" placeholder="Ej.: Se recomienda coordinar el acceso y validar los materiales antes de iniciar."></InputTextArea>
-                </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Fotografías</strong></label>
+                            <InputFile class="form-control" OnChange="CargarFotos" multiple accept="image/*" disabled="@SoloLectura" />
+                            <small class="text-body-secondary">Fotos en este servicio: @DetalleSeleccionado.FotosLevantamientos.Count (máximo 5 MB cada una).</small>
+                        </div>
 
-                @* Fotografías *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Fotografías</strong></label>
-                    <InputFile class="form-control" OnChange="CargarFotos" multiple accept="image/*" disabled="@SoloLectura" />
-                    <small class="text-body-secondary">Tamaño máximo por imagen: 5 MB.</small>
+                        <div class="col-md-10">
+                            <label class="form-label"><strong>Descripción técnica</strong></label>
+                            <InputTextArea class="form-control" @bind-Value="DetalleSeleccionado.DescripcionTecnica" disabled="@SoloLectura" placeholder="Ej.: Sala de 30 m², se recomiendan 24,000 BTU" />
+                        </div>
 
-                    @if (Levantamiento.FotosLevantamientos.Any())
+                        <div class="col-md-2">
+                            @if (!SoloLectura)
+                            {
+                                <button type="button" class="btn btn-outline-success w-100" @onclick="AgregarDetalle">
+                                    <span class="bi @(DetalleEditando != null ? "bi-check-lg" : "bi-plus-lg")"></span> @(DetalleEditando != null ? "Actualizar" : "Agregar")
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    @if (DetalleSeleccionado.FotosLevantamientos.Any())
                     {
                         <div class="row g-3 mt-2">
-                            @foreach (var foto in Levantamiento.FotosLevantamientos)
+                            @foreach (var foto in DetalleSeleccionado.FotosLevantamientos)
                             {
                                 <div class="col-6 col-md-3">
                                     <div class="card h-100">
@@ -106,8 +137,64 @@
                             }
                         </div>
                     }
+
+                    <hr />
+                    <table class="table table-light">
+                        <thead class="table table-striped">
+                            <tr class="Text-center">
+                                <th>Servicio</th>
+                                <th>Ubicación</th>
+                                <th>Distancia (m)</th>
+                                <th>Viable</th>
+                                <th>Fotos</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Levantamiento.LevantamientosDetalle)
+                            {
+                                <tr>
+                                    <td>@ObtenerNombreServicio(detalle.ServicioId)</td>
+                                    <td>@detalle.Ubicacion</td>
+                                    <td>@detalle.DistanciaRecorrido</td>
+                                    <td>
+                                        <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
+                                            @(detalle.Viable ? "Sí" : "No")
+                                        </span>
+                                    </td>
+                                    <td>@detalle.FotosLevantamientos.Count</td>
+                                    <td>
+                                        @if (!SoloLectura)
+                                        {
+                                            <div class="d-flex text-nowrap">
+                                                <button type="button" class="btn btn-outline-primary bi bi-pencil-square"
+                                                        @onclick="() => EditarDetalle(detalle)"></button>
+                                                <button type="button" class="btn btn-outline-danger bi bi-trash ms-2"
+                                                        @onclick="() => RemoverDetalle(detalle)"></button>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
 
+                @* Servicios evaluados *@
+                <div class="row mt-3">
+                    <div class="col-6 offset-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Servicios evaluados</strong></label>
+                            <label class="form-control text-end"><strong>@Levantamiento.LevantamientosDetalle.Count de @(Levantamiento.Solicitud?.SolicitudesDetalle.Count ?? 0)</strong></label>
+                        </div>
+                    </div>
+                </div>
+
+                @* Observaciones *@
+                <div class="mb-3">
+                    <label class="form-label"><strong>Observaciones</strong></label>
+                    <InputTextArea class="form-control" @bind-Value="Levantamiento.Observaciones" disabled="@SoloLectura" placeholder="Ej.: Se recomienda coordinar el acceso y validar los materiales antes de iniciar." />
+                </div>
             </div>
 
             @* Botones de Acción *@
@@ -128,8 +215,16 @@
     public int LevantamientoId { get; set; }
 
     public Levantamientos Levantamiento { get; set; } = new Levantamientos();
+    public LevantamientosDetalle DetalleSeleccionado { get; set; } = new LevantamientosDetalle();
+    private LevantamientosDetalle? DetalleEditando { get; set; }
     public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
+    private Dictionary<string, string> NombresTecnicos { get; set; } = new Dictionary<string, string>();
     private bool SoloLectura => Levantamiento.Solicitud != null && Levantamiento.Solicitud.EstadoSolicitudId != 1 && Levantamiento.Solicitud.EstadoSolicitudId != 2;
+
+    private IEnumerable<SolicitudesDetalle> ServiciosDisponibles =>
+        (Levantamiento.Solicitud?.SolicitudesDetalle ?? Enumerable.Empty<SolicitudesDetalle>())
+        .Where(detalle => !Levantamiento.LevantamientosDetalle.Any(item => item.ServicioId == detalle.ServicioId)
+            || DetalleEditando?.ServicioId == detalle.ServicioId);
 
     protected override async Task OnInitializedAsync()
     {
@@ -138,6 +233,15 @@
 
         var tecnicos = await userManager.GetUsersInRoleAsync("Técnico");
         ListaTecnicos = tecnicos.ToList();
+
+        foreach (var tecnico in ListaTecnicos)
+        {
+            var claims = await userManager.GetClaimsAsync(tecnico);
+            var nombreCompleto = claims.FirstOrDefault(c => c.Type == "NombreCompleto")?.Value;
+            NombresTecnicos[tecnico.Id] = string.IsNullOrWhiteSpace(nombreCompleto)
+                ? (tecnico.UserName ?? "Sin asignar")
+                : nombreCompleto;
+        }
     }
 
     private string ObtenerNombreTecnico(string? tecnicoId)
@@ -147,11 +251,159 @@
             return "Sin asignar";
         }
 
+        if (NombresTecnicos.TryGetValue(tecnicoId, out var nombreCompleto))
+        {
+            return nombreCompleto;
+        }
+
         return ListaTecnicos.FirstOrDefault(t => t.Id == tecnicoId)?.UserName ?? "Sin asignar";
+    }
+
+    private string ObtenerNombreServicio(int servicioId)
+    {
+        return Levantamiento.Solicitud?.SolicitudesDetalle
+            .FirstOrDefault(d => d.ServicioId == servicioId)?.Servicio.Nombre
+            ?? Levantamiento.LevantamientosDetalle
+                .FirstOrDefault(d => d.ServicioId == servicioId)?.Servicio?.Nombre
+            ?? string.Empty;
+    }
+
+    private void AgregarDetalle()
+    {
+        if (SoloLectura)
+        {
+            toastService.ShowError("No se puede modificar un levantamiento cuya solicitud no está pendiente o en proceso.");
+            return;
+        }
+
+        DetalleSeleccionado.Ubicacion = DetalleSeleccionado.Ubicacion.Trim();
+        DetalleSeleccionado.EspacioDisponible = DetalleSeleccionado.EspacioDisponible.Trim();
+        DetalleSeleccionado.DescripcionTecnica = DetalleSeleccionado.DescripcionTecnica.Trim();
+
+        if (DetalleSeleccionado.ServicioId == 0)
+        {
+            toastService.ShowError("Seleccione un servicio.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(DetalleSeleccionado.Ubicacion))
+        {
+            toastService.ShowError("Ingrese la ubicación del equipo.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(DetalleSeleccionado.EspacioDisponible))
+        {
+            toastService.ShowError("Ingrese el espacio disponible.");
+            return;
+        }
+
+        if (DetalleSeleccionado.DistanciaRecorrido < 0)
+        {
+            toastService.ShowError("La distancia no puede ser negativa.");
+            return;
+        }
+
+        if (DetalleEditando == null && Levantamiento.LevantamientosDetalle.Any(d => d.ServicioId == DetalleSeleccionado.ServicioId))
+        {
+            toastService.ShowError("Ese servicio ya fue evaluado.");
+            return;
+        }
+
+        if (DetalleEditando != null)
+        {
+            DetalleEditando.Ubicacion = DetalleSeleccionado.Ubicacion;
+            DetalleEditando.DistanciaRecorrido = DetalleSeleccionado.DistanciaRecorrido;
+            DetalleEditando.EspacioDisponible = DetalleSeleccionado.EspacioDisponible;
+            DetalleEditando.DescripcionTecnica = DetalleSeleccionado.DescripcionTecnica;
+            DetalleEditando.Viable = DetalleSeleccionado.Viable;
+            DetalleEditando.FotosLevantamientos = DetalleSeleccionado.FotosLevantamientos
+                .Select(f => new FotosLevantamientos
+                {
+                    NombreArchivo = f.NombreArchivo,
+                    TipoContenido = f.TipoContenido,
+                    Contenido = f.Contenido
+                })
+                .ToList();
+            DetalleEditando = null;
+        }
+        else
+        {
+            var nuevoDetalle = new LevantamientosDetalle
+            {
+                LevantamientoId = Levantamiento.LevantamientoId,
+                ServicioId = DetalleSeleccionado.ServicioId,
+                Ubicacion = DetalleSeleccionado.Ubicacion,
+                DistanciaRecorrido = DetalleSeleccionado.DistanciaRecorrido,
+                EspacioDisponible = DetalleSeleccionado.EspacioDisponible,
+                DescripcionTecnica = DetalleSeleccionado.DescripcionTecnica,
+                Viable = DetalleSeleccionado.Viable,
+                FotosLevantamientos = DetalleSeleccionado.FotosLevantamientos
+                    .Select(f => new FotosLevantamientos
+                    {
+                        NombreArchivo = f.NombreArchivo,
+                        TipoContenido = f.TipoContenido,
+                        Contenido = f.Contenido
+                    })
+                    .ToList()
+            };
+            Levantamiento.LevantamientosDetalle.Add(nuevoDetalle);
+        }
+
+        DetalleSeleccionado = new LevantamientosDetalle();
+    }
+
+    private void EditarDetalle(LevantamientosDetalle detalle)
+    {
+        if (SoloLectura)
+        {
+            return;
+        }
+
+        DetalleEditando = detalle;
+        DetalleSeleccionado = new LevantamientosDetalle
+        {
+            DetalleId = detalle.DetalleId,
+            LevantamientoId = detalle.LevantamientoId,
+            ServicioId = detalle.ServicioId,
+            Ubicacion = detalle.Ubicacion,
+            DistanciaRecorrido = detalle.DistanciaRecorrido,
+            EspacioDisponible = detalle.EspacioDisponible,
+            DescripcionTecnica = detalle.DescripcionTecnica,
+            Viable = detalle.Viable,
+            FotosLevantamientos = detalle.FotosLevantamientos
+                .Select(f => new FotosLevantamientos
+                {
+                    NombreArchivo = f.NombreArchivo,
+                    TipoContenido = f.TipoContenido,
+                    Contenido = f.Contenido
+                })
+                .ToList()
+        };
+    }
+
+    private void RemoverDetalle(LevantamientosDetalle detalle)
+    {
+        if (SoloLectura)
+        {
+            return;
+        }
+
+        Levantamiento.LevantamientosDetalle.Remove(detalle);
+        if (DetalleEditando == detalle)
+        {
+            DetalleEditando = null;
+            DetalleSeleccionado = new LevantamientosDetalle();
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
     {
+        if (SoloLectura)
+        {
+            return;
+        }
+
         var tamanoMaximo = 5 * 1024 * 1024;
         foreach (var archivo in e.GetMultipleFiles(10))
         {
@@ -171,9 +423,8 @@
             using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
 
-            Levantamiento.FotosLevantamientos.Add(new FotosLevantamientos
+            DetalleSeleccionado.FotosLevantamientos.Add(new FotosLevantamientos
             {
-                LevantamientoId = Levantamiento.LevantamientoId,
                 NombreArchivo = archivo.Name,
                 TipoContenido = archivo.ContentType,
                 Contenido = memoryStream.ToArray()
@@ -183,17 +434,23 @@
 
     private void RemoverFoto(FotosLevantamientos foto)
     {
-        Levantamiento.FotosLevantamientos.Remove(foto);
+        if (SoloLectura)
+        {
+            return;
+        }
+
+        DetalleSeleccionado.FotosLevantamientos.Remove(foto);
     }
 
     private void LimpiarCampos()
     {
-        Levantamiento.DisponibilidadEspaciosFisicos = Levantamiento.DisponibilidadEspaciosFisicos.Trim();
-        Levantamiento.CargasElectricas = Levantamiento.CargasElectricas.Trim();
-        Levantamiento.EstabilidadTension = Levantamiento.EstabilidadTension.Trim();
-        Levantamiento.RecorridoTuberias = Levantamiento.RecorridoTuberias.Trim();
-        Levantamiento.RecorridoCableado = Levantamiento.RecorridoCableado.Trim();
         Levantamiento.Observaciones = Levantamiento.Observaciones.Trim();
+        foreach (var detalle in Levantamiento.LevantamientosDetalle)
+        {
+            detalle.Ubicacion = detalle.Ubicacion.Trim();
+            detalle.EspacioDisponible = detalle.EspacioDisponible.Trim();
+            detalle.DescripcionTecnica = detalle.DescripcionTecnica.Trim();
+        }
     }
 
     private async Task ActualizarEstadoSolicitud(int estadoSolicitudId)
@@ -251,13 +508,15 @@
 
         LimpiarCampos();
 
-        if (Levantamiento.DisponibilidadEspaciosFisicos == "" ||
-            Levantamiento.CargasElectricas == "" ||
-            Levantamiento.EstabilidadTension == "" ||
-            Levantamiento.RecorridoTuberias == "" ||
-            Levantamiento.RecorridoCableado == "")
+        if (Levantamiento.TensionMedida <= 0 || Levantamiento.BreakerPrincipal <= 0 || Levantamiento.ConsumoMensual <= 0)
         {
-            toastService.ShowError("Complete todos los campos obligatorios del levantamiento.");
+            toastService.ShowError("La tensión medida, el breaker principal y el consumo mensual deben ser mayores que cero.");
+            return;
+        }
+
+        if (Levantamiento.Solicitud == null || Levantamiento.LevantamientosDetalle.Count < Levantamiento.Solicitud.SolicitudesDetalle.Count)
+        {
+            toastService.ShowError("Evalúe todos los servicios de la solicitud antes de enviarla a administración.");
             return;
         }
 

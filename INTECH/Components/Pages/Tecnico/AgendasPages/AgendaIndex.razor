@@ -37,7 +37,7 @@
                                 <option value="SIN_ASIGNAR">Sin asignar</option>
                                 @foreach (var tecnico in ListaTecnicos)
                                 {
-                                    <option value="@tecnico.Id">@tecnico.UserName</option>
+                                    <option value="@tecnico.Id">@ObtenerNombreTecnico(tecnico.Id)</option>
                                 }
                             </InputSelect>
                         </div>
@@ -59,83 +59,102 @@
                     @* Calendario *@
                     @if (VistaActual == VistaAgenda.Hoy)
                     {
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0 align-middle">
-                                <tbody>
-                                    @for (int hora = 8; hora <= 18; hora++)
-                                    {
-                                        var horaActual = hora;
-                                        var visitasHora = ListaAgendas
-                                            .Where(a => a.Fecha.Date == FechaReferencia.Date && a.HoraInicio.Hour == horaActual)
-                                            .OrderBy(a => a.HoraInicio)
-                                            .ToList();
+                        var visitasDelDia = ListaAgendas
+                            .Where(a => a.Fecha.Date == FechaReferencia.Date)
+                            .ToList();
 
-                                        <tr>
-                                            <td class="text-body-secondary small fc-col-hora">@($"{(horaActual > 12 ? horaActual - 12 : horaActual):00} {(horaActual >= 12 ? "PM" : "AM")}")</td>
-                                            <td class="fc-slot-cell">
-                                                <div class="d-flex flex-column gap-1">
-                                                    @foreach (var visita in visitasHora)
-                                                    {
-                                                        <div class="badge bg-primary text-start fw-normal py-2 px-2 fc-event-item"
-                                                             @onclick="() => SeleccionarVisita(visita)">
-                                                            <span class="fw-bold">@visita.HoraInicio.ToString("hh:mm tt") - @visita.HoraFin.ToString("hh:mm tt")</span>
-                                                            | Solicitud #@visita.SolicitudId - @visita.Solicitud.Cliente.Nombre (@visita.Solicitud.Direccion)
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="d-flex border rounded bg-white">
+                            @* Columna de horas *@
+                            <div class="fc-col-hora border-end bg-light">
+                                @for (int hora = 8; hora < 18; hora++)
+                                {
+                                    var horaActual = hora;
+                                    <div class="fc-hora-fila small text-body-secondary text-center pt-1">
+                                        @($"{(horaActual > 12 ? horaActual - 12 : horaActual):00} {(horaActual >= 12 ? "PM" : "AM")}")
+                                    </div>
+                                }
+                            </div>
+
+                            @* Columna del día *@
+                            <div class="fc-timeline flex-grow-1">
+                                @for (int hora = 8; hora < 18; hora++)
+                                {
+                                    <div class="fc-hora-fila"></div>
+                                }
+
+                                @foreach (var posicion in ObtenerPosiciones(visitasDelDia))
+                                {
+                                    var servicios = string.Join(", ", posicion.Visita.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre));
+                                    <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-2 overflow-hidden"
+                                         style="@ObtenerEstiloVisita(posicion)"
+                                         @onclick="() => SeleccionarVisita(posicion.Visita)">
+                                        <div class="d-flex justify-content-between align-items-center gap-2">
+                                            <span class="fw-bold text-truncate">@posicion.Visita.Solicitud.Cliente.Nombre</span>
+                                            <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis text-truncate">@ObtenerNombreTecnico(posicion.Visita.TecnicoId)</span>
+                                        </div>
+                                        <div class="small text-body-secondary text-truncate">
+                                            @posicion.Visita.HoraInicio.ToString("hh:mm tt") - @posicion.Visita.HoraFin.ToString("hh:mm tt") • @servicios
+                                        </div>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                     else if (VistaActual == VistaAgenda.Semanal)
                     {
                         var diasSemana = ObtenerDiasSemana();
 
-                        <div class="table-responsive">
-                            <table class="table table-bordered mb-0 align-middle">
-                                <thead class="table-light text-center">
-                                    <tr>
-                                        <th class="fc-col-hora">Hora</th>
-                                        @foreach (var dia in diasSemana)
-                                        {
-                                            var esHoy = dia.Date == DateTime.Today;
-                                            <th class="@(esHoy ? "table-primary" : "")">
-                                                <div class="small text-uppercase text-muted">@dia.ToString("ddd", Cultura)</div>
-                                                <div class="fs-6">@dia.Day</div>
-                                            </th>
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (int hora = 8; hora <= 18; hora++)
-                                    {
-                                        var horaActual = hora;
-                                        <tr>
-                                            <td class="text-center text-muted small bg-light">@($"{horaActual:00}:00")</td>
-                                            @foreach (var dia in diasSemana)
-                                            {
-                                                var visitasHora = ListaAgendas
-                                                    .Where(a => a.Fecha.Date == dia.Date && a.HoraInicio.Hour == horaActual)
-                                                    .OrderBy(a => a.HoraInicio)
-                                                    .ToList();
+                        <div class="d-flex border rounded-top bg-light text-center">
+                            <div class="fc-col-hora border-end py-2 fw-semibold small text-muted">Hora</div>
+                            <div class="fc-grid-7 flex-grow-1">
+                                @foreach (var dia in diasSemana)
+                                {
+                                    var esHoy = dia.Date == DateTime.Today;
+                                    <div class="border-end py-1 @(esHoy ? "bg-primary-subtle" : "")">
+                                        <div class="small text-uppercase text-muted">@dia.ToString("ddd", Cultura)</div>
+                                        <div class="fs-6">@dia.Day</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
 
-                                                <td class="p-1 fc-slot-cell">
-                                                    @foreach (var visita in visitasHora)
-                                                    {
-                                                        <div class="badge bg-primary d-block text-start text-truncate mb-1 p-1 fc-event-item"
-                                                             @onclick="() => SeleccionarVisita(visita)">
-                                                            @visita.HoraInicio.ToString("HH:mm") - #@visita.SolicitudId @visita.Solicitud.Cliente.Nombre
-                                                        </div>
-                                                    }
-                                                </td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="d-flex border-start border-end border-bottom rounded-bottom bg-white">
+                            @* Columna de horas *@
+                            <div class="fc-col-hora border-end bg-light">
+                                @for (int hora = 8; hora < 18; hora++)
+                                {
+                                    var horaActual = hora;
+                                    <div class="fc-hora-fila small text-muted text-center pt-1">@($"{horaActual:00}:00")</div>
+                                }
+                            </div>
+
+                            @* Columnas de la semana *@
+                            <div class="fc-grid-7 flex-grow-1">
+                                @foreach (var dia in diasSemana)
+                                {
+                                    var visitasDia = ListaAgendas
+                                        .Where(a => a.Fecha.Date == dia.Date)
+                                        .ToList();
+
+                                    <div class="fc-timeline border-end">
+                                        @for (int hora = 8; hora < 18; hora++)
+                                        {
+                                            <div class="fc-hora-fila"></div>
+                                        }
+
+                                        @foreach (var posicion in ObtenerPosiciones(visitasDia))
+                                        {
+                                            <div class="fc-visita bg-primary-subtle border-start border-4 border-primary rounded-3 p-1 overflow-hidden"
+                                                 style="@ObtenerEstiloVisita(posicion)"
+                                                 @onclick="() => SeleccionarVisita(posicion.Visita)">
+                                                <div class="small fw-bold text-truncate">@posicion.Visita.HoraInicio.ToString("hh:mm tt")</div>
+                                                <div class="small text-truncate">@posicion.Visita.Solicitud.Cliente.Nombre</div>
+                                                <div class="small text-body-secondary text-truncate">@ObtenerNombreTecnico(posicion.Visita.TecnicoId)</div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
                         </div>
                     }
                     else
@@ -207,7 +226,7 @@
                             <strong>@VisitaSeleccionada.Solicitud.Cliente.Nombre</strong>
                         </div>
                         <div class="mb-2">
-                            <small class="text-body-secondary d-block">Tipo de servicio</small>
+                            <small class="text-body-secondary d-block">Servicios</small>
                             <span>@string.Join(", ", VisitaSeleccionada.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre))</span>
                         </div>
                         <div class="mb-2">
@@ -267,11 +286,14 @@
         Mensual
     }
 
+    private const int HoraInicioAgenda = 8;
+    private const double PixelesPorMinuto = 1;
     private readonly System.Globalization.CultureInfo Cultura = new("es-ES");
     private readonly string[] NombresDias = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
     public List<Agendas> ListaAgendas { get; set; } = new List<Agendas>();
     public List<INTECH.Data.ApplicationUser> ListaTecnicos { get; set; } = new List<INTECH.Data.ApplicationUser>();
+    private Dictionary<string, string> NombresTecnicos { get; set; } = new Dictionary<string, string>();
     public Agendas? VisitaSeleccionada { get; set; }
     public VistaAgenda VistaActual { get; set; } = VistaAgenda.Hoy;
     public DateTime FechaReferencia { get; set; } = DateTime.Today;
@@ -283,6 +305,15 @@
     {
         var tecnicos = await userManager.GetUsersInRoleAsync("Técnico");
         ListaTecnicos = tecnicos.ToList();
+
+        foreach (var tecnico in ListaTecnicos)
+        {
+            var claims = await userManager.GetClaimsAsync(tecnico);
+            var nombreCompleto = claims.FirstOrDefault(c => c.Type == "NombreCompleto")?.Value;
+            NombresTecnicos[tecnico.Id] = string.IsNullOrWhiteSpace(nombreCompleto)
+                ? (tecnico.UserName ?? "Sin asignar")
+                : nombreCompleto;
+        }
 
         await CargarAgendas();
     }
@@ -356,7 +387,97 @@
             return "Sin asignar";
         }
 
+        if (NombresTecnicos.TryGetValue(tecnicoId, out var nombreCompleto))
+        {
+            return nombreCompleto;
+        }
+
         return ListaTecnicos.FirstOrDefault(t => t.Id == tecnicoId)?.UserName ?? "Sin asignar";
+    }
+
+    private List<(Agendas Visita, int Columna, int TotalColumnas)> ObtenerPosiciones(List<Agendas> visitasDelDia)
+    {
+        var resultado = new List<(Agendas Visita, int Columna, int TotalColumnas)>();
+        var ordenadas = visitasDelDia
+            .OrderBy(a => a.HoraInicio)
+            .ThenBy(a => a.HoraFin)
+            .ToList();
+
+        var grupos = new List<List<Agendas>>();
+        var grupoActual = new List<Agendas>();
+        var finMaximoGrupo = TimeOnly.MinValue;
+
+        foreach (var visita in ordenadas)
+        {
+            if (grupoActual.Count == 0 || visita.HoraInicio < finMaximoGrupo)
+            {
+                grupoActual.Add(visita);
+                if (visita.HoraFin > finMaximoGrupo)
+                {
+                    finMaximoGrupo = visita.HoraFin;
+                }
+            }
+            else
+            {
+                grupos.Add(grupoActual);
+                grupoActual = new List<Agendas> { visita };
+                finMaximoGrupo = visita.HoraFin;
+            }
+        }
+
+        if (grupoActual.Count > 0)
+        {
+            grupos.Add(grupoActual);
+        }
+
+        foreach (var grupo in grupos)
+        {
+            var finesPorColumna = new List<TimeOnly>();
+            var asignaciones = new List<(Agendas Visita, int Columna)>();
+
+            foreach (var visita in grupo)
+            {
+                int columnaLibre = -1;
+                for (int i = 0; i < finesPorColumna.Count; i++)
+                {
+                    if (finesPorColumna[i] <= visita.HoraInicio)
+                    {
+                        columnaLibre = i;
+                        finesPorColumna[i] = visita.HoraFin;
+                        break;
+                    }
+                }
+
+                if (columnaLibre == -1)
+                {
+                    columnaLibre = finesPorColumna.Count;
+                    finesPorColumna.Add(visita.HoraFin);
+                }
+
+                asignaciones.Add((visita, columnaLibre));
+            }
+
+            int totalColumnas = finesPorColumna.Count;
+            foreach (var asignacion in asignaciones)
+            {
+                resultado.Add((asignacion.Visita, asignacion.Columna, totalColumnas));
+            }
+        }
+
+        return resultado;
+    }
+
+    private string ObtenerEstiloVisita((Agendas Visita, int Columna, int TotalColumnas) posicion)
+    {
+        var inicioAgenda = new TimeOnly(HoraInicioAgenda, 0);
+        var top = Math.Max(0, (posicion.Visita.HoraInicio - inicioAgenda).TotalMinutes * PixelesPorMinuto);
+        var height = Math.Max(24, (posicion.Visita.HoraFin - posicion.Visita.HoraInicio).TotalMinutes * PixelesPorMinuto);
+        var width = 100.0 / posicion.TotalColumnas;
+        var left = posicion.Columna * width;
+
+        return string.Create(
+            System.Globalization.CultureInfo.InvariantCulture,
+            $"top:{top:0.##}px;height:{height:0.##}px;left:{left:0.##}%;width:calc({width:0.##}% - 4px);");
     }
 
     private string ObtenerColorEstado(int estadoSolicitudId)

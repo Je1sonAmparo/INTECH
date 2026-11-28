@@ -220,6 +220,20 @@ html, body {
     font-size: 0.7rem;
 }
 
+.tecnico-layout .fc-timeline {
+    position: relative;
+}
+
+.tecnico-layout .fc-hora-fila {
+    height: 60px;
+    border-top: 1px solid #e9ecef;
+}
+
+.tecnico-layout .fc-visita {
+    position: absolute;
+    cursor: pointer;
+}
+
 @media (min-width: 768px) {
     .tecnico-sidebar {
         width: 250px;
