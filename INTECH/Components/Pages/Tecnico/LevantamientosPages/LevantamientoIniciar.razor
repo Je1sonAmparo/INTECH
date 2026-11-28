@@ -79,6 +79,18 @@
                                             @(detalle.Viable ? "Sí" : "No")
                                         </span>
                                     </td>
+                                    <td>@detalle.FotosLevantamientos.Count</td>
+                                    <td>
+                                        @if (!SoloLectura)
+                                        {
+                                            <div class="d-flex text-nowrap">
+                                                <button type="button" class="btn btn-outline-primary bi bi-pencil-square"
+                                                        @onclick="() => EditarDetalle(detalle)"></button>
+                                                <button type="button" class="btn btn-outline-danger bi bi-trash ms-2"
+                                                        @onclick="() => RemoverDetalle(detalle)"></button>
+                                            </div>
+                                        }
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -154,6 +166,18 @@
                                         <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
                                             @(detalle.Viable ? "Sí" : "No")
                                         </span>
+                                    </td>
+                                    <td>@detalle.FotosLevantamientos.Count</td>
+                                    <td>
+                                        @if (!SoloLectura)
+                                        {
+                                            <div class="d-flex text-nowrap">
+                                                <button type="button" class="btn btn-outline-primary bi bi-pencil-square"
+                                                        @onclick="() => EditarDetalle(detalle)"></button>
+                                                <button type="button" class="btn btn-outline-danger bi bi-trash ms-2"
+                                                        @onclick="() => RemoverDetalle(detalle)"></button>
+                                            </div>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -272,6 +296,18 @@
                                         <span class="badge @(detalle.Viable ? "bg-success-subtle text-success-emphasis" : "bg-danger-subtle text-danger-emphasis")">
                                             @(detalle.Viable ? "Sí" : "No")
                                         </span>
+                                    </td>
+                                    <td>@detalle.FotosLevantamientos.Count</td>
+                                    <td>
+                                        @if (!SoloLectura)
+                                        {
+                                            <div class="d-flex text-nowrap">
+                                                <button type="button" class="btn btn-outline-primary bi bi-pencil-square"
+                                                        @onclick="() => EditarDetalle(detalle)"></button>
+                                                <button type="button" class="btn btn-outline-danger bi bi-trash ms-2"
+                                                        @onclick="() => RemoverDetalle(detalle)"></button>
+                                            </div>
+                                        }
                                     </td>
                                 </tr>
                             }
