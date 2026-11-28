@@ -64,6 +64,55 @@ public partial class _20261128184456_AgregarDetalleLevantamientos : Migration
             type: "int",
             nullable: false,
             defaultValue: 0);
+
+        migrationBuilder.CreateTable(
+            name: "LevantamientosDetalle",
+            columns: table => new
+            {
+                DetalleId = table.Column<int>(type: "int", nullable: false)
+                    .Annotation("SqlServer:Identity", "1, 1"),
+                LevantamientoId = table.Column<int>(type: "int", nullable: false),
+                ServicioId = table.Column<int>(type: "int", nullable: false),
+                Ubicacion = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                DistanciaRecorrido = table.Column<double>(type: "float", nullable: false),
+                EspacioDisponible = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                DescripcionTecnica = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                Viable = table.Column<bool>(type: "bit", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_LevantamientosDetalle", x => x.DetalleId);
+                table.ForeignKey(
+                    name: "FK_LevantamientosDetalle_Levantamientos_LevantamientoId",
+                    column: x => x.LevantamientoId,
+                    principalTable: "Levantamientos",
+                    principalColumn: "LevantamientoId",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "FK_LevantamientosDetalle_Servicios_ServicioId",
+                    column: x => x.ServicioId,
+                    principalTable: "Servicios",
+                    principalColumn: "ServicioId",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateIndex(
+            name: "IX_LevantamientosDetalle_LevantamientoId",
+            table: "LevantamientosDetalle",
+            column: "LevantamientoId");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_LevantamientosDetalle_ServicioId",
+            table: "LevantamientosDetalle",
+            column: "ServicioId");
+
+        migrationBuilder.AddForeignKey(
+            name: "FK_FotosLevantamientos_LevantamientosDetalle_DetalleId",
+            table: "FotosLevantamientos",
+            column: "DetalleId",
+            principalTable: "LevantamientosDetalle",
+            principalColumn: "DetalleId",
+            onDelete: ReferentialAction.Cascade);
     }
 
     /// <inheritdoc />
