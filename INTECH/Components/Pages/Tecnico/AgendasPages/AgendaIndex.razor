@@ -109,7 +109,8 @@
                             <div class="fc-grid-7 flex-grow-1">
                                 @foreach (var dia in diasSemana)
                                 {
-                                    <div class="border-end py-1">
+                                    var esHoy = dia.Date == DateTime.Today;
+                                    <div class="border-end py-1 @(esHoy ? "bg-primary-subtle" : "")">
                                         <div class="small text-uppercase text-muted">@dia.ToString("ddd", Cultura)</div>
                                         <div class="fs-6">@dia.Day</div>
                                     </div>
