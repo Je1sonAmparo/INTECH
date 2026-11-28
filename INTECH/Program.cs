@@ -85,6 +85,23 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets().AllowAnonymous();
+app.MapGet("/", (HttpContext http) =>
+{
+    if (http.User.IsInRole("Técnico"))
+    {
+        return Results.Redirect("/Tecnico/Inicio");
+    }
+    if (http.User.IsInRole("Gerente"))
+    {
+        return Results.Redirect("/Gerente/Inicio");
+    }
+    if (http.User.Identity?.IsAuthenticated == true)
+    {
+        return Results.Redirect("/Account/Manage");
+    }
+
+    return Results.Redirect("/Account/Login");
+});
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
