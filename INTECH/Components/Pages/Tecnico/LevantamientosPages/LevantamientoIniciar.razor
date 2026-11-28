@@ -359,6 +359,11 @@
     private Dictionary<string, string> NombresTecnicos { get; set; } = new Dictionary<string, string>();
     private bool SoloLectura => Levantamiento.Solicitud != null && Levantamiento.Solicitud.EstadoSolicitudId != 1 && Levantamiento.Solicitud.EstadoSolicitudId != 2;
 
+    private IEnumerable<SolicitudesDetalle> ServiciosDisponibles =>
+        (Levantamiento.Solicitud?.SolicitudesDetalle ?? Enumerable.Empty<SolicitudesDetalle>())
+        .Where(detalle => !Levantamiento.LevantamientosDetalle.Any(item => item.ServicioId == detalle.ServicioId)
+            || DetalleEditando?.ServicioId == detalle.ServicioId);
+
     protected override async Task OnInitializedAsync()
     {
         var result = await levantamientosService.Buscar(LevantamientoId);
