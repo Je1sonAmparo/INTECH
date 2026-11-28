@@ -18,4 +18,7 @@ public class LevantamientosDetalle
 
     [Range(0, double.MaxValue, ErrorMessage = "La distancia no puede ser negativa")]
     public double DistanciaRecorrido { get; set; }
+
+    [StringLength(250, ErrorMessage = "El espacio disponible no puede superar los 250 caracteres")]
+    public string EspacioDisponible { get; set; } = string.Empty;
 }
