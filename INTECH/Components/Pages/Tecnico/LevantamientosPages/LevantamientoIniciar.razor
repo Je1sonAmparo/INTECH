@@ -33,11 +33,6 @@
                     </div>
                 </div>
 
-                @* Servicios *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Servicios</strong></label>
-                    <input class="form-control" value="@(Levantamiento.Solicitud == null ? "" : string.Join(", ", Levantamiento.Solicitud.SolicitudesDetalle.Select(detalle => detalle.Servicio.Nombre)))" disabled />
-                </div>
 
                 @* Disponibilidad de los espacios físicos *@
                 <div class="mb-3">
