@@ -5,4 +5,6 @@ namespace INTECH.Models;
 
 public class LevantamientosDetalle
 {
+    [Key]
+    public int DetalleId { get; set; }
 }
