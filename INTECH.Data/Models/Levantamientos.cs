@@ -42,5 +42,5 @@ public class Levantamientos
     public virtual Solicitudes Solicitud { get; set; } = null!;
 
     [InverseProperty("Levantamiento")]
-    public virtual ICollection<FotosLevantamientos> FotosLevantamientos { get; set; } = new List<FotosLevantamientos>();
+    public virtual ICollection<LevantamientosDetalle> LevantamientosDetalle { get; set; } = new List<LevantamientosDetalle>();
 }
