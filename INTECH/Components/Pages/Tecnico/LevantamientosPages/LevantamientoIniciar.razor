@@ -447,6 +447,24 @@
             toastService.ShowError("Ese servicio ya fue evaluado.");
             return;
         }
+
+        if (DetalleEditando != null)
+        {
+            DetalleEditando.Ubicacion = DetalleSeleccionado.Ubicacion;
+            DetalleEditando.DistanciaRecorrido = DetalleSeleccionado.DistanciaRecorrido;
+            DetalleEditando.EspacioDisponible = DetalleSeleccionado.EspacioDisponible;
+            DetalleEditando.DescripcionTecnica = DetalleSeleccionado.DescripcionTecnica;
+            DetalleEditando.Viable = DetalleSeleccionado.Viable;
+            DetalleEditando.FotosLevantamientos = DetalleSeleccionado.FotosLevantamientos
+                .Select(f => new FotosLevantamientos
+                {
+                    NombreArchivo = f.NombreArchivo,
+                    TipoContenido = f.TipoContenido,
+                    Contenido = f.Contenido
+                })
+                .ToList();
+            DetalleEditando = null;
+        }
     }
 
     private async Task CargarFotos(InputFileChangeEventArgs e)
