@@ -220,6 +220,10 @@ html, body {
     font-size: 0.7rem;
 }
 
+.tecnico-layout .fc-timeline {
+    position: relative;
+}
+
 @media (min-width: 768px) {
     .tecnico-sidebar {
         width: 250px;
