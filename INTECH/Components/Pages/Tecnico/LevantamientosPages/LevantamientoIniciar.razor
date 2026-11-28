@@ -491,6 +491,35 @@
         DetalleSeleccionado = new LevantamientosDetalle();
     }
 
+    private void EditarDetalle(LevantamientosDetalle detalle)
+    {
+        if (SoloLectura)
+        {
+            return;
+        }
+
+        DetalleEditando = detalle;
+        DetalleSeleccionado = new LevantamientosDetalle
+        {
+            DetalleId = detalle.DetalleId,
+            LevantamientoId = detalle.LevantamientoId,
+            ServicioId = detalle.ServicioId,
+            Ubicacion = detalle.Ubicacion,
+            DistanciaRecorrido = detalle.DistanciaRecorrido,
+            EspacioDisponible = detalle.EspacioDisponible,
+            DescripcionTecnica = detalle.DescripcionTecnica,
+            Viable = detalle.Viable,
+            FotosLevantamientos = detalle.FotosLevantamientos
+                .Select(f => new FotosLevantamientos
+                {
+                    NombreArchivo = f.NombreArchivo,
+                    TipoContenido = f.TipoContenido,
+                    Contenido = f.Contenido
+                })
+                .ToList()
+        };
+    }
+
     private async Task CargarFotos(InputFileChangeEventArgs e)
     {
         var tamanoMaximo = 5 * 1024 * 1024;
