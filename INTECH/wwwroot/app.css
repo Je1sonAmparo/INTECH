@@ -134,6 +134,7 @@ html, body {
 }
 
 .tecnico-layout .form-select::picker(select) {
+    position-try-order: normal;
     padding: 0.25rem 0;
     border: 1px solid rgba(70, 59, 196, 0.3);
     border-radius: 0.375rem;
