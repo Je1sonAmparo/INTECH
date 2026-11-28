@@ -57,12 +57,6 @@
                     </div>
                 </div>
 
-                @* Disponibilidad de los espacios físicos *@
-                <div class="mb-3">
-                    <label class="form-label"><strong>Disponibilidad de los espacios físicos *</strong></label>
-                    <InputText class="form-control" @bind-Value="Levantamiento.DisponibilidadEspaciosFisicos" disabled="@SoloLectura" placeholder="Ej.: Área de trabajo disponible en horario coordinado con el cliente"></InputText>
-                    <ValidationMessage For="(() => Levantamiento.DisponibilidadEspaciosFisicos)" />
-                </div>
 
                 @* Cargas eléctricas *@
                 <div class="mb-3">
